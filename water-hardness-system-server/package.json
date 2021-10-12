@@ -1,0 +1,18 @@
+{
+  "name": "water-hardness-system-server",
+  "version": "1.0.0",
+  "description": "Backend for water hardness system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Huiying Li",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongodb": "^4.1.3",
+    "mongoose": "^6.0.10",
+    "nodemon": "^2.0.13"
+  }
+}
