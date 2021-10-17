@@ -3,14 +3,18 @@
 ## Water Hardness System Server
 ### Set up backend
 - open water-hardness-system-server: npm init
-- npm install express nodemon
-- npm install mongoose
-- npm install dotenv
-- npx nodemon server.js
+- npm install express nodemon mongoose dotenv bcrypt
+- update database name and password in .env file. dbName: WaterHardnessSystem, password: CMPE295
+- npx nodemon app.js
+
+
+### Postman
+- localhost:3000/user/signup
+- localhost:3000/user/signin 
+
 
 ### Set up MongoDB
 1. Create [MongoDB account](https://www.mongodb.com/)
-2. 
 
 ---
 ## Introduction to MongoDB
