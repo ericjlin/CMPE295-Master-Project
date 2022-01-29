@@ -1,15 +1,33 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-
+import MapView, {Marker} from 'react-native-maps';
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 
 export default function TabTwoScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabTwoScreen.tsx" />
+      <MapView
+      mapType={"standard"}
+      style={{
+        height: '100%',
+        width: '100%'
+      }}
+      initialRegion={{
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}
+    >
+    <Marker
+      key={0}
+      coordinate={{ latitude: 37.78825,
+        longitude: -122.4324 }}
+      title={"Test Marker"}
+      description={"Marker Description"}
+    />
+    </MapView>
     </View>
   );
 }

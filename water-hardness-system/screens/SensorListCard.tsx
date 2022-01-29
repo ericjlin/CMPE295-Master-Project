@@ -25,7 +25,22 @@ const SensorListCard = props => {
       >
         <View
           style={{
-            marginLeft: 10,
+            marginLeft: 5,
+            marginRight: 0,
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+            <Image style={{
+              height: 120,
+              width: 120,
+              borderRadius: '50%',
+            }} source={require("../assets/images/icon.png")} />
+        </View>
+        <View
+          style={{
+            marginLeft: 5,
             marginRight: 10,
             flexDirection: 'column',
             alignItems: 'center',
@@ -51,7 +66,17 @@ const SensorListCard = props => {
             <Text>Alerts: 1</Text>
           </View>
         </View>
-        <Text>Last Updated: 09:31 AM</Text>
+        <View
+        style={{
+          marginLeft: 10,
+          marginRight: 10,
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Text>Last Updated: </Text>
+          <Text>09:31 AM</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
