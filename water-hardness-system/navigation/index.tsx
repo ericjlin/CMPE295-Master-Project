@@ -101,11 +101,41 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
+        name="Map"
         component={TabTwoScreen}
         options={{
-          title: 'Tab Two',
+          title: 'Map',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          headerLeft: () => (
+            <Pressable
+              onPress={() => {}}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1
+              })}>
+              <Text
+              style={{
+                left: 15
+              }}>Add Sensor</Text>
+            </Pressable>
+          ),
+          headerRight: () => (
+            <Pressable
+              onPress={() => navigation.navigate('Modal')}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}>
+              {/* <FontAwesome
+                name="info-circle"
+                size={25}
+                color={Colors[colorScheme].text}
+                style={{ marginRight: 15 }}
+              /> */}
+              <Text
+              style={{
+                right: 15
+              }}>Profile</Text>
+            </Pressable>
+          )
         }}
       />
     </BottomTab.Navigator>
