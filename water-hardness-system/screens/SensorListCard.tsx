@@ -6,7 +6,7 @@ const SensorListCard = props => {
   return (
     <TouchableOpacity
       onPress={() => {
-        // props.navigation.push('Sensor', { payload: props.payload });
+        props.navigation.push('Sensor', { payload: props.payload });
       }}
     >
       <View
