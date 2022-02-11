@@ -7,6 +7,7 @@ import { RootTabScreenProps } from '../types';
 import SensorListScrollContainer from './SensorListScrollContainer';
 import SensorListCard from './SensorListCard';
 
+
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 
   const listOfSensors = [
