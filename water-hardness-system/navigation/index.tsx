@@ -21,6 +21,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 import { AuthScreen } from '../screens/AuthScreen';
 import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
+import SensorView from '../screens/SensorView';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   const {user} = useContext(AuthContext)
@@ -28,8 +29,9 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {user ? 
-       <RootNavigator /> :
+      {user ?
+       <RootNavigator />
+       :
        <AuthScreen />
       }
     </NavigationContainer>
@@ -42,14 +44,17 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
  */
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function RootNavigator() {
+function RootNavigator(route) {
   return (
     <Stack.Navigator>
+      
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
+      <Stack.Screen name="Sensor" component={SensorView} />
+      
     </Stack.Navigator>
   );
 }
