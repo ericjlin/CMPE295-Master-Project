@@ -1,25 +1,106 @@
 import { createNativeStackNavigator, NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useContext } from 'react';
-import { Button, Text, View } from "react-native";
+import React, { useContext, useState } from 'react';
+import { Button, Text, TouchableOpacity, View,StyleSheet, Image} from "react-native";
 import { AuthContext } from '../context/AuthContext';
 import { AuthStackNavProps, AuthStackParamList } from '../types';
-
+import FormInput from '../components/FormInput';
+import FormButton from '../components/FormButton';
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 
 const Login = ({navigation}: AuthStackNavProps<'Login'>) =>{
     const {login} = useContext(AuthContext)
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+  
     return (
-    <View>
-    <Button title="Login" onPress={()=>{login()}}>Login</Button>
-    <Button title="Go To Register" onPress= {()=> {
+    <View style = {styles.container}>
+    <Image style = {styles.logo} source={require("../assets/images/water-logo.png")} />
+    <Text style={styles.logoName}>Water Hardness Quality</Text>
+    <View style={styles.formContainer}>
+    <FormInput
+        labelValue={email}
+        onChangeText={(userEmail) => setEmail(userEmail)}
+        placeholderText="Email"
+        iconType="user"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+      
+            <FormInput
+        labelValue={password}
+        onChangeText={(userPassword) => setPassword(userPassword)}
+        placeholderText="Password"
+        iconType="lock"
+        secureTextEntry={true}
+      />
+      </View>
+        <FormButton
+        buttonTitle="Sign In"
+        backgroundColor="#2e64e5"
+        onPress={() => login()}
+      />
+    <FormButton buttonTitle="Sign Up" backgroundColor="#28a745"  onPress= {()=> {
         navigation.navigate("Register")
-    }}>Go to Register</Button>
+    }}/>
     </View>
     )
 }
+
 const Register = ({navigation}: AuthStackNavProps<'Register'>) =>{
-    return <Text>Register Screen</Text>
+    const {login} = useContext(AuthContext)
+
+    const [name, setName] = useState();
+
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [passwordCheck, setPasswordCheck] = useState();
+
+    return(
+    <View style={styles.container}>
+    <Text style={styles.signUpHeader}>Enter Account Information</Text>
+   <View style={styles.formContainer}>
+    <FormInput
+    labelValue={name}
+    onChangeText={(userName) => setName(userName)}
+    placeholderText="Name"
+    iconType="user"
+    keyboardType="email-address"
+    autoCapitalize="none"
+    autoCorrect={false}
+  />
+   <FormInput
+    labelValue={email}
+    onChangeText={(userEmail) => setEmail(userEmail)}
+    placeholderText="Email"
+    iconType="user"
+    keyboardType="email-address"
+    autoCapitalize="none"
+    autoCorrect={false}
+  />
+    <FormInput
+        labelValue={password}
+        onChangeText={(userPassword) => setPassword(userPassword)}
+        placeholderText="Password"
+        iconType="lock"
+        secureTextEntry={true}
+      />
+       <FormInput
+        labelValue={passwordCheck}
+        onChangeText={(userPassword) => setPasswordCheck(userPassword)}
+        placeholderText="Confirm Password"
+        iconType="lock"
+        secureTextEntry={true}
+      />
+      </View>
+        <FormButton
+        buttonTitle="Register"
+        backgroundColor="#28a745"
+        onPress={() => navigation.goBack()}
+      />
+  </View>
+    )
 }
 export const AuthScreen: React.FC = () => {
   return <AuthStack.Navigator initialRouteName="Login">
@@ -27,3 +108,33 @@ export const AuthScreen: React.FC = () => {
       <AuthStack.Screen name= "Register" component={Register}></AuthStack.Screen>
   </AuthStack.Navigator>;
 }
+ const styles = StyleSheet.create({
+        container: {
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+          paddingTop: 50,
+        },
+        logo: {
+            height: 150,
+            width: 150,
+            resizeMode: 'cover',
+            marginBottom: 30 
+          },
+          logoName: {
+              fontSize: 24,
+              color: "blue",
+              fontWeight: "bold",
+              marginBottom: 50
+          },
+          formContainer:
+          {
+              marginBottom:25
+          },
+          signUpHeader:{
+              fontSize:20,
+              marginBottom:35,
+              fontWeight: "bold",
+
+          }
+ })
