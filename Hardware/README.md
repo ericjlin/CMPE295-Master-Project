@@ -9,5 +9,6 @@
 - PubSubClient by Nick O'Leary (Version 2.8.0)
 - ArduinoJson by Benoit Blanchon (Version 6.19.1)
 - WifiLocation by Germán Martín (Version 1.2.9)
-
+- OneWire by Paul Stoffregen (Version 2.3.6)
+- DallasTemperature by Miles Burton (Version 3.9.0)
 
