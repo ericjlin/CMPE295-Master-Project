@@ -7,13 +7,23 @@
 
 #include <WifiLocation.h>
 
+// DS18B20 Temp Sensor
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 // Hardware declerations
-int sensorValue;
+// TDS Sensor
+int tds_sensor_value;
 float tds_value;
-float voltage;
+float tds_voltage;
+int tds_pin;
 
-int sensorPin;
+// Temperature Sensor
+const int oneWireBus = 4;     
+float temp_value;
+
+OneWire oneWire(oneWireBus);
+DallasTemperature temp_sensor(&oneWire);
 
 
 // Location declerations
@@ -138,10 +148,10 @@ void sendJsonToAWS(float sensor_data)
   client.publish(AWS_IOT_TOPIC, jsonBuffer);
 }
 
-float getData() {
-  sensorValue = analogRead(sensorPin);
-  voltage = sensorValue*5/4096.0; //Convert analog reading to Voltage
-  tds_value = (133.42/voltage*voltage*voltage - 255.86*voltage*voltage + 857.39*voltage)*0.5; //Convert voltage value to TDS value
+float getTdsData() {
+  tds_sensor_value = analogRead(tds_pin);
+  tds_voltage = tds_sensor_value*5/4096.0; //Convert analog reading to Voltage
+  tds_value = (133.42/tds_voltage*tds_voltage*tds_voltage - 255.86*tds_voltage*tds_voltage + 857.39*tds_voltage)*0.5; //Convert voltage value to TDS value
   Serial.print("TDS Value = "); 
   Serial.print(tds_value);
   Serial.println(" ppm");
@@ -150,15 +160,29 @@ float getData() {
   return tds_value;
 }
 
+float getTempData() {
+  temp_sensor.requestTemperatures(); 
+  float temperature = temp_sensor.getTempFByIndex(0);
+  Serial.print(temperature);
+  Serial.println("ºF");
+  delay(2000);
+
+  return temperature;
+}
+
 void setup() {
   Serial.begin(9600);
 
   // Hardware setup
-  sensorValue = 0;
+  tds_sensor_value = 0;
   tds_value = 0;
-  voltage = 0;
-  sensorPin = 36;
-  pinMode(sensorPin, INPUT);
+  tds_voltage = 0;
+  tds_pin = 36;
+  pinMode(tds_pin, INPUT);
+
+  // Start the DS18B20 sensor
+  temp_sensor.begin();
+  temp_value = 0;
 
   // Location setup
   longitude = 0;
@@ -170,9 +194,10 @@ void setup() {
 }
 
 void loop() {
-  tds_value = getData();
+  tds_value = getTdsData();
+  temp_value = getTempData();
   
-  sendJsonToAWS(tds_value);
+  //sendJsonToAWS(tds_value);
   client.loop();
   delay(1000);
 }
