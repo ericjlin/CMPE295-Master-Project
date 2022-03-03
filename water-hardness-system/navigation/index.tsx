@@ -53,7 +53,7 @@ function RootNavigator(route) {
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
-      <Stack.Screen name="Sensor" component={SensorView} />
+      <Stack.Screen name="Sensor" component={SensorView}/>
       
     </Stack.Navigator>
   );
@@ -151,7 +151,7 @@ function BottomTabNavigator() {
           ),
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate('Modal')}
+              onPress={() => logout()}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
@@ -164,9 +164,9 @@ function BottomTabNavigator() {
               <Text
               style={{
                 right: 15
-              }}>Profile</Text>
+              }}>Logout</Text>
             </Pressable>
-          )
+          ),
         }}
       />
     </BottomTab.Navigator>
