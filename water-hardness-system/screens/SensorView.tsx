@@ -4,81 +4,9 @@ import { VictoryLine, VictoryChart, VictoryAxis, VictoryTheme } from "victory-na
 import { DataTable, Headline } from 'react-native-paper';
 import { grey100 } from 'react-native-paper/lib/typescript/styles/colors';
 import DropDownPicker from 'react-native-dropdown-picker';
-
-const data = [
-    {
-        timestamp: "06:08:00 PM",
-        data: 226.11,
-    },
-    {
-        timestamp: "06:08:03 PM",
-        data: 100.11,
-    },
-    {
-        timestamp: "06:08:06 PM",
-        data: 110.11,
-    },
-    {
-        timestamp: "06:08:09 PM",
-        data: 115.11,
-    },
-    {
-        timestamp: "06:08:12 PM",
-        data: 160.11,
-    },
-    {
-        timestamp: "06:08:15 PM",
-        data: 300.11,
-    },
-    {
-        timestamp: "06:08:18 PM",
-        data: 350.11,
-    },
-    {
-        timestamp: "06:08:21 PM",
-        data: 336.11,
-    },
-  ];
+import { grabSensorData } from './services';
 
 const optionsPerPage = [2, 3, 4];
-
-const fetchIndividualSensorData = () => {
-    const sensorData = [
-        {
-            timestamp: "11/16/2021, 06:08:00 PM",
-            data: 226.11,
-        },
-        {
-            timestamp: "11/16/2021, 06:08:03 PM",
-            data: 100.11,
-        },
-        {
-            timestamp: "11/16/2021, 06:08:06 PM",
-            data: 110.11,
-        },
-        {
-            timestamp: "11/16/2021, 06:08:09 PM",
-            data: 115.11,
-        },
-        {
-            timestamp: "11/16/2021, 06:08:12 PM",
-            data: 160.11,
-        },
-        {
-            timestamp: "11/16/2021, 06:08:15 PM",
-            data: 300.11,
-        },
-        {
-            timestamp: "11/16/2021, 06:08:18 PM",
-            data: 350.11,
-        },
-        {
-            timestamp: "11/16/2021, 06:08:21 PM",
-            data: 336.11,
-        },
-    ];;
-    return sensorData;
-}
 
 const SensorView = ({ route, navigation }) => {
     
@@ -86,17 +14,19 @@ const SensorView = ({ route, navigation }) => {
     const [itemsPerPage, setItemsPerPage] = React.useState<any>(optionsPerPage[0]);
     const [sensorData, setSensorData] = React.useState<any>([]);
     const [dropdownToggle, setDropDownToggle] = React.useState<any>(false);
-    const [currentSensor, setCurrentSensor] = React.useState<any>('TDS');
+    const [currentSensor, setCurrentSensor] = React.useState<any>('tds');
     const data1 = route.params.payload;
     const [items, setItems] = useState([
         {label: 'TDS', value: 'tds'},
         {label: 'PH', value: 'ph'},
+        {label: 'Turbidity', value: 'turbidity'},
         {label: 'Temperature', value: 'temperature'}
       ]);
 
     React.useEffect(() => {
         setPage(0);
-        let x = fetchIndividualSensorData()
+        // let x = fetchIndividualSensorData()
+        let x = grabSensorData(currentSensor);
         setSensorData(x)
     }, [itemsPerPage, currentSensor]);
     return (
@@ -176,7 +106,7 @@ const SensorView = ({ route, navigation }) => {
                             grid: { stroke: "grey" }
                             }}
                         tickCount={4} />
-                    <VictoryLine data={data} x="timestamp" y="data" />
+                    <VictoryLine data={sensorData} x="timestamp" y="data" />
                 </VictoryChart>
                 <View>
                 </View>
