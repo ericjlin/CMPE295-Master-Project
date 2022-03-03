@@ -9,7 +9,7 @@ const SensorListScrollContainer = ({ children, title }) => {
       style={{
         height: 650,
         // backgroundColor: bg_color,
-        marginBottom: 1,
+        marginBottom: 5,
       }}
     >
       <Text
