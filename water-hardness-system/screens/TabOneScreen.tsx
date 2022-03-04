@@ -111,13 +111,12 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       </Modal>
  {/* *************************************************** */}
       <View style={{
-        top: 10,
+        top: 20,
         marginBottom: 10,
         flexDirection: 'row',
         alignItems: 'center'
       }}>
         <TextInput style={{
-          
           height: 25,
           width: 325,
           borderWidth: 1,
@@ -133,7 +132,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <SensorListScrollContainer title={'Sensors'} setModalVisible = {setModalVisible} modalVisible={modalVisible}>
         {listOfSensors.map((obj) => {
-          return(<SensorListCard navigation={navigation} payload={obj} />);
+          return(<SensorListCard key={obj.name} navigation={navigation} payload={obj} />);
         })}
       </SensorListScrollContainer>
     </View>
@@ -144,7 +143,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 20,
