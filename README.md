@@ -6,6 +6,7 @@
 - npm install express nodemon mongoose dotenv bcrypt
 - update database name and password in .env file. dbName: WaterHardnessSystem, password: CMPE295
 - npx nodemon app.js
+- npm i aws-sdk --save
 
 
 ### Postman

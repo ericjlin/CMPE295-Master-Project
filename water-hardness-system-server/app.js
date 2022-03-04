@@ -3,7 +3,7 @@ require('./config/db');
 const app = require('express')();
 const port = 3000;
 
-const UserRouter = require('./api/users.routes')
+const UserRouter = require('./api/routes')
 
 
 // For accepting post from data
