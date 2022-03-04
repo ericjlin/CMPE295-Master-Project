@@ -11,7 +11,7 @@ const SensorListScrollContainer = ({ children, title, setModalVisible }) => {
       style={{
         height: 650,
         // backgroundColor: bg_color,
-        marginBottom: 1,
+        marginBottom: 5,
       }}
     >
       <Text
