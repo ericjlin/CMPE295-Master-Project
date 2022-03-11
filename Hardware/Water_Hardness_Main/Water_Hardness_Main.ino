@@ -25,6 +25,13 @@ float temp_value;
 OneWire oneWire(oneWireBus);
 DallasTemperature temp_sensor(&oneWire);
 
+// PH Sensor
+int ph_pin;
+float ph_value;
+#define Offset -4.00     // Sensor offset precision         
+#define ArrayLenth  40   // Collection amount
+int pHArray[ArrayLenth]; // Array to average sensor output
+int pHArrayIndex=0;
 
 // Location declerations
 float longitude;
@@ -132,9 +139,12 @@ void sendJsonToAWS(float sensor_data)
   // Write the temperature & humidity. Here you can use any C++ type (and you can refer to variables)
   //reportedObj["tds_value"] = sensor_data;
   jsonDoc["tds_value"] = sensor_data;
-  //jsonDoc["temp_value"] = 10;
-  //jsonDoc["ph_value"] = 11;
-  //jsonDoc["turbidity_value"] = 12;
+  jsonDoc["temp_value"] = 10;
+  jsonDoc["ph_value"] = 11;
+  jsonDoc["turbidity_value"] = 12;
+  jsonDoc["latitude"] = latitude;
+  jsonDoc["longitude"] = longitude;
+
   
   // Create a nested object "location"
   //JsonObject locationObj = reportedObj.createNestedObject("location");
@@ -152,7 +162,7 @@ float getTdsData() {
   tds_sensor_value = analogRead(tds_pin);
   tds_voltage = tds_sensor_value*5/4096.0; //Convert analog reading to Voltage
   tds_value = (133.42/tds_voltage*tds_voltage*tds_voltage - 255.86*tds_voltage*tds_voltage + 857.39*tds_voltage)*0.5; //Convert voltage value to TDS value
-  Serial.print("TDS Value = "); 
+  Serial.print("TDS Value: "); 
   Serial.print(tds_value);
   Serial.println(" ppm");
   delay(2000);
@@ -164,10 +174,69 @@ float getTempData() {
   temp_sensor.requestTemperatures(); 
   float temperature = temp_sensor.getTempFByIndex(0);
   Serial.print(temperature);
+  Serial.print("Temperature value: ");
   Serial.println("ºF");
   delay(2000);
 
   return temperature;
+}
+
+// Open source code provided by sensor vendor DFROBOT: https://wiki.dfrobot.com/PH_meter_SKU__SEN0161_
+float getPhData() {
+  static float pHValue,voltage;
+
+  while(pHArrayIndex != ArrayLenth){
+      pHArray[pHArrayIndex++] = analogRead(ph_pin);
+  }
+  if(pHArrayIndex == ArrayLenth)pHArrayIndex = 0;
+  voltage = avergearray(pHArray, ArrayLenth)*5.0/4096;
+  pHValue = 3.5*voltage+Offset;
+  
+  Serial.print("pH value: ");
+  Serial.println(pHValue ,2);
+    
+  return pHValue;
+}
+
+// Open source code provided by sensor vendor DFROBOT: https://wiki.dfrobot.com/PH_meter_SKU__SEN0161_
+double avergearray(int* arr, int number){
+  int i;
+  int max,min;
+  double avg;
+  long amount=0;
+  if(number<=0){
+    Serial.println("Error number for the array to avraging!/n");
+    return 0;
+  }
+  if(number<5){   
+    for(i=0;i<number;i++){
+      amount+=arr[i];
+    }
+    avg = amount/number;
+    return avg;
+  }else{
+    if(arr[0]<arr[1]){
+      min = arr[0];max=arr[1];
+    }
+    else{
+      min=arr[1];max=arr[0];
+    }
+    for(i=2;i<number;i++){
+      if(arr[i]<min){
+        amount+=min;        
+        min=arr[i];
+      }else {
+        if(arr[i]>max){
+          amount+=max;   
+          max=arr[i];
+        }else{
+          amount+=arr[i]; 
+        }
+      }
+    }
+    avg = (double)amount/(number-2);
+  }
+  return avg;
 }
 
 void setup() {
@@ -184,6 +253,11 @@ void setup() {
   temp_sensor.begin();
   temp_value = 0;
 
+  // Ph sensor setup
+  ph_pin = 39;
+  ph_value = 0;
+  pinMode(ph_pin, INPUT);
+
   // Location setup
   longitude = 0;
   latitude = 0;
@@ -196,6 +270,7 @@ void setup() {
 void loop() {
   tds_value = getTdsData();
   temp_value = getTempData();
+  ph_value = getPhData();
   
   //sendJsonToAWS(tds_value);
   client.loop();
