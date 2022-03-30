@@ -8,6 +8,8 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+package-lock.json
+package.json
 
 # Local History for Visual Studio Code
 .history/
@@ -15,3 +17,4 @@ web-build/
 # macOS
 .DS_Store
 ../.DS_Store
+../.idea/
