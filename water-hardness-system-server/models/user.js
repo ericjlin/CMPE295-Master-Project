@@ -1,15 +1,28 @@
 const dynamoose = require("dynamoose");
 
-const schema = new dynamoose.Schema({
+
+const sensorSchema = new dynamoose.Schema({
+    "id": Number,
+    "location": String,
+    "type": String,
+    "threshold": Number,
+    "name": String
+});
+
+const userSchema = new dynamoose.Schema({
     "firstName": String,
     "lastName": String,
-    email: {
+    "email": {
         type: String,
         hashKey: true
     },
-    "password": String
+    "password": String,
+    "sensorList": {
+        type: Array,
+        schema: [sensorSchema],
+    }
 });
 
-const User = dynamoose.model('testingTable2', schema);
+const User = dynamoose.model('testingTable3', userSchema);
 
 module.exports = (User);
