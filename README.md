@@ -15,6 +15,10 @@
 ### Postman
 - localhost:3000/user/signup
 - localhost:3000/user/signin 
+- localhost:3000/user/addNewSensor
+- localhost:3000/user/getAllSensors
+- localhost:3000/user/updateSensorInfo
+- localhost:3000/user/getSensorData
 
 ---
 ## Introduction to Dynamoose
