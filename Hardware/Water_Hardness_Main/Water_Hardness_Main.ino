@@ -33,6 +33,13 @@ float ph_value;
 int pHArray[ArrayLenth]; // Array to average sensor output
 int pHArrayIndex=0;
 
+// Turbidity Sensor
+int turb_sensor_value;
+int turb_pin;
+float turb_value;
+float turb_voltage;
+
+
 // Location declerations
 float longitude;
 float latitude;
@@ -50,13 +57,13 @@ WifiLocation location (googleApiKey);
 
 
 // The name of the device. This MUST match up with the name defined in the AWS console
-#define DEVICE_NAME "my-esp32-device"
+#define DEVICE_NAME ""
 
 // The MQTTT endpoint for the device (unique for each AWS account but shared amongst devices within the account)
 #define AWS_IOT_ENDPOINT ""
 
 // The MQTT topic that this device should publish to
-#define AWS_IOT_TOPIC "device/22/data"
+#define AWS_IOT_TOPIC ""
 
 
 WiFiClientSecure net = WiFiClientSecure();
@@ -130,7 +137,7 @@ void connectToAWS()
   Serial.println("\nConnected to AWS IOT!");
 }
 
-void sendJsonToAWS(float sensor_data)
+void sendJsonToAWS(float tds_data, float temp_data, float ph_data, float turb_data)
 { 
   StaticJsonDocument<128> jsonDoc;
   //JsonObject stateObj = jsonDoc.createNestedObject("state");
@@ -138,13 +145,12 @@ void sendJsonToAWS(float sensor_data)
   
   // Write the temperature & humidity. Here you can use any C++ type (and you can refer to variables)
   //reportedObj["tds_value"] = sensor_data;
-  jsonDoc["tds_value"] = sensor_data;
-  jsonDoc["temp_value"] = 10;
-  jsonDoc["ph_value"] = 11;
-  jsonDoc["turbidity_value"] = 12;
+  jsonDoc["tds_value"] = tds_data;
+  jsonDoc["temp_value"] = temp_data;
+  jsonDoc["ph_value"] = ph_data;
+  jsonDoc["turbidity_value"] = turb_data;
   jsonDoc["latitude"] = latitude;
   jsonDoc["longitude"] = longitude;
-
   
   // Create a nested object "location"
   //JsonObject locationObj = reportedObj.createNestedObject("location");
@@ -173,8 +179,8 @@ float getTdsData() {
 float getTempData() {
   temp_sensor.requestTemperatures(); 
   float temperature = temp_sensor.getTempFByIndex(0);
-  Serial.print(temperature);
   Serial.print("Temperature value: ");
+  Serial.print(temperature);
   Serial.println("ºF");
   delay(2000);
 
@@ -239,6 +245,18 @@ double avergearray(int* arr, int number){
   return avg;
 }
 
+float getTurbidityData() {
+  turb_sensor_value = analogRead(turb_pin);
+  turb_voltage = turb_sensor_value * (5.0 / 4096.0); // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
+  turb_value = turb_voltage;
+  Serial.print("Turbidity Value: "); 
+  Serial.print(turb_value);
+  Serial.println(" NTU");
+  delay(2000);
+
+  return turb_value;
+}
+
 void setup() {
   Serial.begin(9600);
 
@@ -258,6 +276,11 @@ void setup() {
   ph_value = 0;
   pinMode(ph_pin, INPUT);
 
+  // Turbidity sensor setup
+  turb_pin = 34;
+  turb_value = 0;
+  turb_voltage = 0;
+
   // Location setup
   longitude = 0;
   latitude = 0;
@@ -271,8 +294,10 @@ void loop() {
   tds_value = getTdsData();
   temp_value = getTempData();
   ph_value = getPhData();
+  turb_value = getTurbidityData();
+  Serial.println("");
   
-  //sendJsonToAWS(tds_value);
+  //sendJsonToAWS(tds_value, temp_value, ph_value, turb_value);
   client.loop();
   delay(1000);
 }
