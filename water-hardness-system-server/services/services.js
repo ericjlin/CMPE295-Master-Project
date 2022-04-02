@@ -154,7 +154,7 @@ const addNewSensor = async (req, res) => {
         let { email, id, location, type, threshold, name } = req.body;
 
         email = email.trim();
-        id = id.trim();
+        // id = id.trim();
         location = location.trim();
         type = type.trim();
         name = name.trim();
@@ -174,6 +174,7 @@ const addNewSensor = async (req, res) => {
             },
             (error, user) => {
                 if (error) {
+                    console.log(error);
                     res.json({
                         status: "FAILED",
                         message: "Unable to add sensor",
@@ -188,6 +189,7 @@ const addNewSensor = async (req, res) => {
             }
         );
     } catch (e) {
+        console.log(e);
         res.json({
             status: "FAILED",
             message: "Unable to add sensor",
@@ -197,8 +199,8 @@ const addNewSensor = async (req, res) => {
 
 const getAllSensors = async (req, res) => {
     try {
-        let { email } = req.body;
-        email = email.trim();
+        console.log(req.query.email);
+        let email = req.query.email;
 
         console.log(email);
         User.get(email, (error, data) => {
@@ -286,10 +288,11 @@ const updateSensorInfo = async (req, res) => {
 
 const getSensorData = async (req, res) => {
     try {
-        let { email, device_id } = req.body;
-        email = email.trim();
+        let email = req.query.email;
+        let device_id = Number(req.query.deviceId);
+        console.log(device_id);
 
-        SensorData.query().where("device_id").eq(device_id).sort().limit(2).exec((error, data) => {
+        SensorData.query().where("device_id").eq(device_id).sort().exec((error, data) => {
             if (error) {
                 console.log(error);
                 res.json({
