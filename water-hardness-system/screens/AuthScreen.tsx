@@ -9,9 +9,9 @@ import FormButton from '../components/FormButton';
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 
 const Login = ({navigation}: AuthStackNavProps<'Login'>) =>{
-    const {login} = useContext(AuthContext)
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+    const {login,register} = useContext(AuthContext)
+    const [email , setEmail] = useState("");
+    const [password, setPassword] = useState("");
   
     return (
     <View style = {styles.container}>
@@ -39,7 +39,7 @@ const Login = ({navigation}: AuthStackNavProps<'Login'>) =>{
         <FormButton
         buttonTitle="Sign In"
         backgroundColor="#2e64e5"
-        onPress={() => login()}
+        onPress={() => login(email, password)}
       />
     <FormButton buttonTitle="Sign Up" backgroundColor="#28a745"  onPress= {()=> {
         navigation.navigate("Register")
@@ -49,22 +49,31 @@ const Login = ({navigation}: AuthStackNavProps<'Login'>) =>{
 }
 
 const Register = ({navigation}: AuthStackNavProps<'Register'>) =>{
-    const {login} = useContext(AuthContext)
+    const {login,register} = useContext(AuthContext)
 
-    const [name, setName] = useState();
-
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [passwordCheck, setPasswordCheck] = useState();
+    const [firstName, setfName] = useState("");
+    const [lastName, setlName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordCheck, setPasswordCheck] = useState("");
 
     return(
     <View style={styles.container}>
     <Text style={styles.signUpHeader}>Enter Account Information</Text>
    <View style={styles.formContainer}>
     <FormInput
-    labelValue={name}
-    onChangeText={(userName) => setName(userName)}
-    placeholderText="Name"
+    labelValue={firstName}
+    onChangeText={(firstName) => setfName(firstName)}
+    placeholderText="First Name"
+    iconType="user"
+    keyboardType="email-address"
+    autoCapitalize="none"
+    autoCorrect={false}
+  />
+  <FormInput
+    labelValue={lastName}
+    onChangeText={(lastName) => setlName(lastName)}
+    placeholderText="Last Name"
     iconType="user"
     keyboardType="email-address"
     autoCapitalize="none"
@@ -97,7 +106,16 @@ const Register = ({navigation}: AuthStackNavProps<'Register'>) =>{
         <FormButton
         buttonTitle="Register"
         backgroundColor="#28a745"
-        onPress={() => navigation.goBack()}
+        onPress={() => 
+          register(firstName,lastName,email,password).then((response)=>{
+              console.log(response.data)
+              if(response.data.status=="SUCCESSED")
+                navigation.goBack()
+          }).catch((e)=>{
+            console.log(e)
+          })
+        
+        }
       />
   </View>
     )
