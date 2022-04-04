@@ -1,21 +1,23 @@
 import * as React from 'react';
-import { StyleSheet, TextInput, Button } from 'react-native';
+import { StyleSheet, TextInput, Button, Alert } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 import SensorListScrollContainer from './SensorListScrollContainer';
 import SensorListCard from './SensorListCard';
-import {Modal, Pressable} from "react-native"
-import { useState } from 'react';
+import { Modal, Pressable } from "react-native"
+import { useState, useEffect } from 'react';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import { getAllSensors } from './services';
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
-
+  var sensorData;
+  const [sensorDat, setSensorData] = useState({});
+  const [alert, setAlert] = useState(false);
   const [listOfSensors, setListOfSensors] = useState([
     {
       name: 'Master Bedroom',
@@ -43,18 +45,57 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
     },
   ]);
 
-  const addSensor = (name, img_url) =>{
+  useEffect(() => {
+    getAllSensors()
+    .then(resp => resp.json())
+    .then(data => {
+      console.log("DEBUG", data);
+      setListOfSensors(data.message.sensorList);
+    }).catch(err => {
+      console.log(err);
+    });
+    if (alert === true) {
+      Alert.alert(
+        "Sensor over threshold!",
+        "Bedroom",
+        [
+          {
+            text: "Go to Sensor",
+            onPress: () => {
+              setAlert(false);
+              navigation.push('Sensor', {
+                payload: {
+                  name: 'Master Bedroom',
+                  img_url: '',
+                },
+              });
+            }
+          },
+          {
+            text: "Dismiss",
+            onPress: () => setAlert(false),
+            style: "cancel"
+          },
+        ]
+      );
+    }
+
+  }, []);
+
+
+
+  const addSensor = (name, img_url) => {
     setLocation("")
     setsensorID("")
-    setListOfSensors(oldList=> [...oldList, {name, img_url}])
+    setListOfSensors(oldList => [...oldList, { name, img_url }])
   }
 
   const [modalVisible, setModalVisible] = useState(false)
   const [location, setLocation] = useState("");
-    const [sensorID, setsensorID] = useState("");
+  const [sensorID, setsensorID] = useState("");
   return (
     <View style={styles.container}>
-       {/* *************************************************** */}
+      {/* *************************************************** */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -66,39 +107,40 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-          <AntDesign onPress={()=>{
-            setLocation("")
-            setsensorID("")
-            setModalVisible(!modalVisible)} 
-            } style={{alignSelf:"flex-end", color:"red", marginBottom:15,}} name="close" size={25} color="#666" />
+            <AntDesign onPress={() => {
+              setLocation("")
+              setsensorID("")
+              setModalVisible(!modalVisible)
+            }
+            } style={{ alignSelf: "flex-end", color: "red", marginBottom: 15, }} name="close" size={25} color="#666" />
             {/* <View style={{marginRight:0}}> */}
             <Text style={styles.modalText}>Enter Sensor Information</Text>
-    <FormInput
-        labelValue={location}
-        onChangeText={(newLocation) => {setLocation(newLocation)}}
-        placeholderText="Location..."
-        iconType="home"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-      
             <FormInput
-        labelValue={sensorID}
-      onChangeText={(newSensorID) => {setsensorID(newSensorID)}}
-        placeholderText="Sensor ID..."
-        iconType="key"
-      />
-      <TouchableOpacity 
-      onPress={() => {
-          addSensor(location, sensorID)
-          setModalVisible(!modalVisible);
-        }} 
-        style={{marginTop:15}}>
-        <FormButton
-        buttonTitle="Register Sensor"
-        backgroundColor="purple"
-      />
-      </TouchableOpacity>
+              labelValue={location}
+              onChangeText={(newLocation) => { setLocation(newLocation) }}
+              placeholderText="Location..."
+              iconType="home"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            <FormInput
+              labelValue={sensorID}
+              onChangeText={(newSensorID) => { setsensorID(newSensorID) }}
+              placeholderText="Sensor ID..."
+              iconType="key"
+            />
+            <TouchableOpacity
+              onPress={() => {
+                addSensor(location, sensorID)
+                setModalVisible(!modalVisible);
+              }}
+              style={{ marginTop: 15 }}>
+              <FormButton
+                buttonTitle="Register Sensor"
+                backgroundColor="purple"
+              />
+            </TouchableOpacity>
             {/* <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => setModalVisible(!modalVisible)}
@@ -109,7 +151,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
           </View>
         </View>
       </Modal>
- {/* *************************************************** */}
+      {/* *************************************************** */}
       <View style={{
         top: 20,
         marginBottom: 10,
@@ -122,17 +164,17 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
           borderWidth: 1,
           borderRadius: 5
         }}
-        placeholder="Sensor id, title, address ..."
+          placeholder="Sensor id, title, address ..."
         />
-        <Button 
+        <Button
           title={'Search'}
           color="blue"
-          />
+        />
       </View>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <SensorListScrollContainer title={'Sensors'} setModalVisible = {setModalVisible} modalVisible={modalVisible}>
+      <SensorListScrollContainer title={'Sensors'} setModalVisible={setModalVisible} modalVisible={modalVisible}>
         {listOfSensors.map((obj) => {
-          return(<SensorListCard key={obj.name} navigation={navigation} payload={obj} />);
+          return (<SensorListCard key={obj.name} navigation={navigation} payload={obj} />);
         })}
       </SensorListScrollContainer>
     </View>
@@ -166,7 +208,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    paddingRight:10,
+    paddingRight: 10,
     paddingTop: 5,
     // alignItems: "center",
     shadowColor: "#000",
@@ -197,8 +239,8 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
-    fontSize:18,
-    fontWeight:"bold",
-    marginRight:10
+    fontSize: 18,
+    fontWeight: "bold",
+    marginRight: 10
   }
 });

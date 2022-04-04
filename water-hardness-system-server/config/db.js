@@ -1,6 +1,7 @@
 const dynamoose = require("dynamoose");
 const sdk = dynamoose.aws.sdk;
 require('dotenv').config();
+
 console.log(process.env.AWS_DEFAULT_REGION);
 
 sdk.config.update({
