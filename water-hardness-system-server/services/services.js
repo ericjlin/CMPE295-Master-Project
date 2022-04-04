@@ -6,6 +6,7 @@ const SensorData = require("../models/SensorData");
 
 const userSignup = async (req, res) => {
     try {
+        console.log("REGISTER")
         let { firstName, lastName, email, password } = req.body;
         firstName = firstName.trim();
         lastName = lastName.trim();
@@ -95,6 +96,7 @@ const userSignup = async (req, res) => {
 
 const userSignin = async (req, res) => {
     try {
+        console.log("signin requested")
         let { email, password } = req.body;
         email = email.trim();
         password = password.trim();
