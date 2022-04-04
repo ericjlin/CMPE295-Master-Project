@@ -1,3 +1,5 @@
+import * as AWS from 'aws-sdk';
+
 const tdsData = [
     {
         timestamp: "06:08:00 PM",
@@ -152,3 +154,19 @@ export const grabSensorData = (sensorType: string) => {
         return turbidityData;
     }
 }
+
+export const getAllSensors = () => {
+    const requestOptions = {
+        method: 'GET'
+      };
+
+    return fetch("http://localhost:3000/user/getAllSensors?email=pe295@sj.ed", requestOptions);
+}
+
+export const getSensorData = (id: Number) => {
+    const requestOptions = {
+        method: 'GET'
+    };
+
+    return fetch("http://localhost:3000/user/getSensorData?email=pe295@sj.ed&deviceId=" + id, requestOptions);
+} 

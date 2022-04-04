@@ -4,7 +4,7 @@ import { VictoryLine, VictoryChart, VictoryAxis, VictoryTheme } from "victory-na
 import { DataTable, Headline } from 'react-native-paper';
 import { grey100 } from 'react-native-paper/lib/typescript/styles/colors';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { grabSensorData } from './services';
+import { grabSensorData, getSensorData } from './services';
 
 const optionsPerPage = [2, 3, 4];
 
@@ -14,21 +14,40 @@ const SensorView = ({ route, navigation }) => {
     const [itemsPerPage, setItemsPerPage] = React.useState<any>(optionsPerPage[0]);
     const [sensorData, setSensorData] = React.useState<any>([]);
     const [dropdownToggle, setDropDownToggle] = React.useState<any>(false);
-    const [currentSensor, setCurrentSensor] = React.useState<any>('tds');
+    const [currentSensor, setCurrentSensor] = React.useState<any>('tds_value');
     const data1 = route.params.payload;
     const [items, setItems] = useState([
-        {label: 'TDS', value: 'tds'},
-        {label: 'PH', value: 'ph'},
-        {label: 'Turbidity', value: 'turbidity'},
-        {label: 'Temperature', value: 'temperature'}
+        {label: 'TDS', value: 'tds_value'},
+        {label: 'PH', value: 'ph_value'},
+        {label: 'Turbidity', value: 'turbidity_value'},
+        {label: 'Temperature', value: 'temp_value'}
       ]);
+
+    const sectionData = (input, sensorType) => {
+        setSensorData(input.map(obj => {
+            return {
+                timestamp: obj.sample_time,
+                data: obj.device_data[sensorType]
+            }
+        }));
+    }
 
     React.useEffect(() => {
         setPage(0);
-        // let x = fetchIndividualSensorData()
         let x = grabSensorData(currentSensor);
-        setSensorData(x)
+        getSensorData(data1.id).then(resp => resp.json())
+        .then(data => {
+            if (data.status === 'SUCCESSED') {
+                sectionData(data.message, currentSensor);
+            } else {
+                console.log(data);
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+        setSensorData(x);
     }, [itemsPerPage, currentSensor]);
+
     return (
         <View style={styles.container}>
             <View style={{
@@ -106,7 +125,7 @@ const SensorView = ({ route, navigation }) => {
                             grid: { stroke: "grey" }
                             }}
                         tickCount={4} />
-                    <VictoryLine data={sensorData} x="timestamp" y="data" />
+                    {sensorData !== undefined && sensorData.length > 0 ? <VictoryLine data={sensorData} x="timestamp" y="data" /> : null}
                 </VictoryChart>
                 <View>
                 </View>
@@ -116,14 +135,14 @@ const SensorView = ({ route, navigation }) => {
                         <DataTable.Title numeric>Data</DataTable.Title>
                     </DataTable.Header>
 
-                    {sensorData.map((obj, idx) => {
+                    {sensorData !== undefined ? sensorData.map((obj, idx) => {
                             return (
                                 <DataTable.Row key={idx + "_row"}>
                                     <DataTable.Cell>{obj.timestamp}</DataTable.Cell>
                                     <DataTable.Cell numeric>{obj.data}</DataTable.Cell>
                                 </DataTable.Row>
                             );
-                    })}
+                    }) : null}
 
                     <DataTable.Pagination
                         page={page}
