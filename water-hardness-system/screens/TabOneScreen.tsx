@@ -152,26 +152,6 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
         </View>
       </Modal>
       {/* *************************************************** */}
-      <View style={{
-        top: 20,
-        marginBottom: 10,
-        flexDirection: 'row',
-        alignItems: 'center'
-      }}>
-        <TextInput style={{
-          height: 25,
-          width: 325,
-          borderWidth: 1,
-          borderRadius: 5
-        }}
-          placeholder="Sensor id, title, address ..."
-        />
-        <Button
-          title={'Search'}
-          color="blue"
-        />
-      </View>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <SensorListScrollContainer title={'Sensors'} setModalVisible={setModalVisible} modalVisible={modalVisible}>
         {listOfSensors.map((obj) => {
           return (<SensorListCard key={obj.name} navigation={navigation} payload={obj} />);

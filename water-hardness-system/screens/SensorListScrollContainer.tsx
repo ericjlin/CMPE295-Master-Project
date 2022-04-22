@@ -9,25 +9,32 @@ const SensorListScrollContainer = ({ children, title, setModalVisible }) => {
   return (
     <View
       style={{
-        height: 650,
+        height: '100%',
         // backgroundColor: bg_color,
         marginBottom: 5,
       }}
     >
-      <Text
-        key={'title'}
-        style={{
-          fontWeight: 'bold',
-          fontSize: 20,
-          marginBottom: 20,
-          marginLeft: 20,
-          marginRight: 5,
-          // textAlign:"center"
-        }}
-      >
-        {title}
-      </Text>
-      <AntDesign onPress={()=>{setModalVisible(true)}} style={{textAlign:"right", color:"green", marginBottom:5}} name="plus" size={25} color="#666" />
+      <View style={{
+        flex:1, 
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+      }}>
+        <Text
+          key={'title'}
+          style={{
+            fontWeight: 'bold',
+            fontSize: 20,
+            marginTop: 10,
+            marginBottom: 10,
+            marginLeft: 20,
+            marginRight: 5,
+            // textAlign:"center"
+          }}
+        >
+          {title}
+        </Text>
+        <AntDesign onPress={() => { setModalVisible(true) }} style={{ textAlign: "right", color: "green", marginBottom: 5, marginTop: 10 }} name="plus" size={25} color="#666" />
+      </View>
       <ScrollView horizontal={false}>{children}</ScrollView>
     </View>
   );
