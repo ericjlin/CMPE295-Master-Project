@@ -61,9 +61,9 @@ const SensorListCard = props => {
           <View style={{
               flexDirection: 'row',
           }}>
-            <Text>Connected</Text>
-            <Text> </Text>
             <Text>Alerts: 1</Text>
+            <Text> </Text>
+            <Text>{props.payload.location}</Text>
           </View>
         </View>
         <View

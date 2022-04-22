@@ -170,3 +170,18 @@ export const getSensorData = (id: Number) => {
 
     return fetch("http://localhost:3000/user/getSensorData?email=pe295@sj.ed&deviceId=" + id, requestOptions);
 } 
+
+export const editSensor = (id: Number, email: any, location: any, type: any, threshold: number, name: string) => {
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email, id, location, type, threshold, name
+          }),
+    };
+
+    return fetch("http://localhost:3000/user/updateSensorInfo", requestOptions)
+}
