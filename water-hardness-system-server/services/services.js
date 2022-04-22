@@ -3,6 +3,8 @@ const { json } = require("express");
 const dynamoose = require("dynamoose");
 const User = require("../models/User");
 const SensorData = require("../models/SensorData");
+const CityAve = require("../models/CityAve");
+const XMLHttpRequest = require('xhr2');
 
 const userSignup = async (req, res) => {
     try {
@@ -316,7 +318,122 @@ const getSensorData = async (req, res) => {
         });
     }
 }
-// const
+
+const getCityAve = async (req, res) => {
+    try {
+        let city = req.query.city;
+        console.log(city);
+
+        CityAve.query().where("city").eq(city).exec((error, data) => {
+            if (error) {
+                console.log(error);
+                res.json({
+                    status: "FAILED",
+                    message: "Unable to obtain city average",
+                });
+            } else {
+                console.log(data);
+                res.json({
+                    status: "SUCCESSED",
+                    message: data,
+                });
+            }
+        })
+
+
+    } catch (e) {
+        console.log(e);
+        res.json ({
+            status: "FAILED",
+            message: "Unable to obtain city average",
+        });
+    }
+}
+
+function getCity(lat, lng, type, value) {
+    var xhr = new XMLHttpRequest();
+    // Paste your LocationIQ token below.
+    xhr.open('GET', "https://us1.locationiq.com/v1/reverse.php?key=YOUR_KEY&lat=" +
+    lat + "&lon=" + lng + "&format=json", true);
+    xhr.send();
+    xhr.onreadystatechange = processRequest;
+    // xhr.addEventListener("readystatechange", processRequest, false);
+
+    function processRequest(e) {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var response = JSON.parse(xhr.responseText);
+            var city = response.address.city;
+            console.log(city); 
+            if (city) {
+                updateAve(city, type, value);
+            }
+        }
+    }
+
+    const updateAve = async (city, type, value) => {
+        try {
+            console.log("update city average...");
+            CityAve.scan().where("city").eq(city).and().where("type").eq(type).exec((error, data) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log(data[0]);
+                    var ave = data[0].average;
+                    var count = data[0].count;
+                    var newCount = count + 1;
+                    var newAve = (ave * count + value) / newCount; 
+
+                    CityAve.update(
+                        {
+                            "city": city,
+                            "type": type,
+                        },
+                        {
+                            "count": newCount,
+                            "average": newAve,
+                        },
+                        (error, doc) => {
+                            if (error) {
+                                console.log(error);
+                            } else {
+                                console.log(doc);
+                            }
+                        }
+                    );
+                }
+            })
+        } catch (e) {
+            console.log(e);
+        }
+    }
+}
+
+function fetchSensorData () {
+    var curTime = Date.now();
+    var tenMinsBefore = curTime - 5 * 60 * 1000; 
+    console.log(curTime);
+    console.log(tenMinsBefore);
+
+    SensorData.scan().where("sample_time").ge(tenMinsBefore).exec((error, data) => {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log(data);
+            if (data.count === 0) {
+                console.log("No data");
+            } else {
+                var lat = data[0].device_data.latitude;
+                var lng = data[0].device_data.longitude;
+                if (data[0].device_data.tds_value) {
+                    var type = "tds";
+                    var value = data[0].device_data.tds_value;
+                }
+                getCity(lat, lng, type, value);
+            }
+        }
+    })
+}
+
 module.exports = {
     userSignup,
     userSignin,
@@ -324,4 +441,6 @@ module.exports = {
     getAllSensors,
     updateSensorInfo,
     getSensorData,
+    getCityAve,
+    fetchSensorData,
 };
