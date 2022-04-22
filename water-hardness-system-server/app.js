@@ -3,14 +3,16 @@ const app = require('express')();
 const port = 3000;
 
 const UserRouter = require('./api/routes')
+const userServices = require('./services/services');
 
 
 // For accepting post from data
 const bodyParser = require('express').json;
 app.use(bodyParser());
 
-app.use('/user', UserRouter)
+app.use('/user', UserRouter);
 
 app.listen(port, () =>{
     console.log(`Server runing on port ${port}`);
+    setInterval(userServices.fetchSensorData, 5000);
 })
