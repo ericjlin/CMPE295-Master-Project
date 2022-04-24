@@ -12,6 +12,7 @@ const SensorListScrollContainer = ({ children, title, setModalVisible }) => {
         height: '100%',
         // backgroundColor: bg_color,
         marginBottom: 5,
+        marginTop: 10
       }}
     >
       <View style={{
