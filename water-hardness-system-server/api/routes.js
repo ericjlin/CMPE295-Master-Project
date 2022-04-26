@@ -20,7 +20,7 @@ router.post('/updateSensorInfo', userServices.updateSensorInfo);
 //Get sensor data
 router.get('/getSensorData', userServices.getSensorData);
 
-//Get city average
+// Get city average
 router.get('/getCityAve', userServices.getCityAve);
 
 module.exports = router;
