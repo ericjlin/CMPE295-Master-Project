@@ -87,6 +87,11 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       );
     }
 
+    return function cleanup() {
+      console.log("DEBUG cleanup");
+      socket.close();
+    }
+
   }, []);
 
 
