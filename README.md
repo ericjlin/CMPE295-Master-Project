@@ -3,7 +3,7 @@
 ## Water Hardness System Server
 ### Set up backend
 - open water-hardness-system-server: npm init
-- npm install express nodemon mongoose dotenv bcrypt aws-sdk dynamoose xhr2
+- npm install express nodemon mongoose dotenv bcrypt aws-sdk dynamoose xhr2 socket.io cors
 - update database info in .env file. 
 <br>AWS_ACCESS_KEY_ID=**
 <br>AWS_SECRET_ACCESS_KEY=**

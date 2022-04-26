@@ -5,6 +5,7 @@ const User = require("../models/User");
 const SensorData = require("../models/SensorData");
 const CityAve = require("../models/CityAve");
 const XMLHttpRequest = require('xhr2');
+const { sendMessage } = require('../utils/socket_io');
 
 const userSignup = async (req, res) => {
     try {
@@ -363,7 +364,6 @@ function getCity(lat, lng, type, value) {
         if (xhr.readyState == 4 && xhr.status == 200) {
             var response = JSON.parse(xhr.responseText);
             var city = response.address.city;
-            console.log(city); 
             if (city) {
                 updateAve(city, type, value);
             }
@@ -375,7 +375,20 @@ function getCity(lat, lng, type, value) {
             console.log("update city average...");
             CityAve.scan().where("city").eq(city).and().where("type").eq(type).exec((error, data) => {
                 if (error) {
-                    console.log(error);
+                    let count = 1;
+                    const newDoc = new CityAve({
+                        city,
+                        type,
+                        value,
+                        count,
+                    })
+                    CityAve.create(newDoc, (error, result) => {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log(result);
+                        }
+                    })
                 } else {
                     console.log(data[0]);
                     var ave = data[0].average;
@@ -410,9 +423,7 @@ function getCity(lat, lng, type, value) {
 
 function fetchSensorData () {
     var curTime = Date.now();
-    var tenMinsBefore = curTime - 5 * 60 * 1000; 
-    console.log(curTime);
-    console.log(tenMinsBefore);
+    var tenMinsBefore = curTime - 50000 * 60 * 1000; 
 
     SensorData.scan().where("sample_time").ge(tenMinsBefore).exec((error, data) => {
         if (error) {
@@ -427,8 +438,29 @@ function fetchSensorData () {
                 if (data[0].device_data.tds_value) {
                     var type = "tds";
                     var value = data[0].device_data.tds_value;
+                    getCity(lat, lng, type, value);
+                    if (value > 200) {
+                        sendMessage("sendNotification", "TDS Exceed Thredhold");
+                    }
                 }
-                getCity(lat, lng, type, value);
+                if (data[0].device_data.turbidity_value) {
+                    var type = "turbidity";
+                    var value = data[0].device_data.tds_value;
+                    getCity(lat, lng, type, value);
+                }
+
+                if (data[0].device_data.temp_value) {
+                    var type = "temp";
+                    var value = data[0].device_data.temp_value;
+                    getCity(lat, lng, type, value);
+                }
+
+                if (data[0].device_data.ph_value) {
+                    var type = "ph";
+                    var value = data[0].device_data.ph_value;
+                    getCity(lat, lng, type, value);
+                }
+
             }
         }
     })
