@@ -6,6 +6,7 @@ const SensorData = require("../models/SensorData");
 const CityAve = require("../models/CityAve");
 const XMLHttpRequest = require('xhr2');
 const { sendMessage } = require('../utils/socket_io');
+require('dotenv').config();
 
 const userSignup = async (req, res) => {
     try {
@@ -354,7 +355,7 @@ const getCityAve = async (req, res) => {
 function getCity(lat, lng, type, value) {
     var xhr = new XMLHttpRequest();
     // Paste your LocationIQ token below.
-    xhr.open('GET', "https://us1.locationiq.com/v1/reverse.php?key=YOUR_KEY&lat=" +
+    xhr.open('GET', "https://us1.locationiq.com/v1/reverse.php?key=" + process.env.MAP_KEY + "&lat=" +
     lat + "&lon=" + lng + "&format=json", true);
     xhr.send();
     xhr.onreadystatechange = processRequest;
