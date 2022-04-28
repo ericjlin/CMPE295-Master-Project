@@ -21,7 +21,7 @@ const server =  http.createServer(app);
 
 server.listen(port, () =>{
     console.log(`Server runing on port ${port}`);
-    setInterval(userServices.fetchSensorData, 50000);
+    // setInterval(userServices.fetchSensorData, 50000);
 })
 
 socketConnection(server);

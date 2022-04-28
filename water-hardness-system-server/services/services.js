@@ -155,13 +155,11 @@ const userSignin = async (req, res) => {
 
 const addNewSensor = async (req, res) => {
     try {
-        let { email, id, location, type, threshold, name } = req.body;
+        let { email, id, location} = req.body;
 
         email = email.trim();
         // id = id.trim();
         location = location.trim();
-        type = type.trim();
-        name = name.trim();
 
         User.update(
             { "email": email },
@@ -170,9 +168,12 @@ const addNewSensor = async (req, res) => {
                     "sensorList": {
                         "id": id,
                         "location": location,
-                        "type": type,
-                        "threshold": threshold,
-                        "name": name,
+                        "name": "",
+                        "tds_threshold": 304.96,
+                        "turbidity_threshold": 2.08,
+                        "temp_threshold": 65.52,
+                        "ph_threshold": 8.82,
+
                     },
                 }
             },
@@ -215,14 +216,20 @@ const getAllSensors = async (req, res) => {
                     message: "Unable to get sensors' information",
                 });
             } else {
-                console.log(data.sensorList);
-                let sensorList = data.sensorList;
-                res.json({
-                    status: "SUCCESSED",
-                    message: {
-                        sensorList
-                    }
-                });
+                if (data.sensorList) {
+                    let sensorList = data.sensorList;
+                    res.json({
+                        status: "SUCCESSED",
+                        message: {
+                            sensorList
+                        }
+                    });
+                } else {
+                    res.json({
+                        status: "SUCCESSED",
+                        message: "No Sensor Info",
+                    });
+                }
             }
         });
     } catch (e) {
@@ -236,7 +243,7 @@ const getAllSensors = async (req, res) => {
 
 const updateSensorInfo = async (req, res) => {
     try {
-        let { email, id, location, type, threshold, name } = req.body;
+        let { email, id, location, name, tds_threshold, turbidity_threshold, temp_threshold, ph_threshold } = req.body;
         // email = email.trim();
         // id = id.trim();
         // location = location.trim();
@@ -249,9 +256,11 @@ const updateSensorInfo = async (req, res) => {
         for (i = 0; i < sensorList.length; i++) {
             if (sensorList[i].id == id) {
                 sensorList[i].location = location;
-                sensorList[i].type = type;
-                sensorList[i].threshold = threshold;
                 sensorList[i].name = name;
+                sensorList[i].tds_threshold = tds_threshold;
+                sensorList[i].turbidity_threshold = turbidity_threshold;
+                sensorList[i].temp_threshold = temp_threshold;
+                sensorList[i].ph_threshold = ph_threshold;
             }
         }
 
@@ -380,7 +389,7 @@ function getCity(lat, lng, type, value) {
                     const newDoc = new CityAve({
                         city,
                         type,
-                        value,
+                        average: value,
                         count,
                     })
                     CityAve.create(newDoc, (error, result) => {
@@ -446,7 +455,7 @@ function fetchSensorData () {
                 }
                 if (data[0].device_data.turbidity_value) {
                     var type = "turbidity";
-                    var value = data[0].device_data.tds_value;
+                    var value = data[0].device_data.turbidity_value;
                     getCity(lat, lng, type, value);
                 }
 
