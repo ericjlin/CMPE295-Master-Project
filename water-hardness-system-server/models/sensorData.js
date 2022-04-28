@@ -22,5 +22,5 @@ const dataSchema = new dynamoose.Schema({
     }
 });
 
-const SensorData = dynamoose.model('data', dataSchema);
+const SensorData = dynamoose.model('water_data_sensor_table', dataSchema);
 module.exports = (SensorData);

@@ -23,6 +23,6 @@ const userSchema = new dynamoose.Schema({
     }
 });
 
-const User = dynamoose.model('testingTable3', userSchema);
+const User = dynamoose.model('user_table', userSchema);
 
 module.exports = (User);
