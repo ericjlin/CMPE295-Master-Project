@@ -10,6 +10,7 @@ npm-debug.*
 web-build/
 package-lock.json
 package.json
+.env
 
 # Local History for Visual Studio Code
 .history/
