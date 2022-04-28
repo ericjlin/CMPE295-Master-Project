@@ -13,5 +13,5 @@ const citySchema = new dynamoose.Schema({
     "count": Number
 });
 
-const CityAve = dynamoose.model('city', citySchema);
+const CityAve = dynamoose.model('city_average_table', citySchema);
 module.exports = (CityAve);
