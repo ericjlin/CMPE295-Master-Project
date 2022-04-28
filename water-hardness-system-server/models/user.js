@@ -4,9 +4,11 @@ const dynamoose = require("dynamoose");
 const sensorSchema = new dynamoose.Schema({
     "id": Number,
     "location": String,
-    "type": String,
-    "threshold": Number,
-    "name": String
+    "name": String,
+    "tds_threshold": Number,
+    "turbidity_threshold": Number,
+    "temp_threshold": Number,
+    "ph_threshold": Number,
 });
 
 const userSchema = new dynamoose.Schema({
