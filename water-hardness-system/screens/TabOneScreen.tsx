@@ -13,6 +13,7 @@ import FormButton from '../components/FormButton';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getAllSensors } from './services';
+import { io } from "socket.io-client";
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   var sensorData;
@@ -44,16 +45,22 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       img_url: '',
     },
   ]);
+  var socket = io('http://127.0.0.1:3000');
+  socket.emit("send_message", {message: "Hello!"});
 
   useEffect(() => {
     getAllSensors()
     .then(resp => resp.json())
     .then(data => {
-      console.log("DEBUG", data);
       setListOfSensors(data.message.sensorList);
     }).catch(err => {
       console.log(err);
     });
+
+    socket.on("sendNotification", (data) => {
+      Alert.alert(data);
+    });
+
     if (alert === true) {
       Alert.alert(
         "Sensor over threshold!",
@@ -78,6 +85,11 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
           },
         ]
       );
+    }
+
+    return function cleanup() {
+      console.log("DEBUG cleanup");
+      socket.close();
     }
 
   }, []);

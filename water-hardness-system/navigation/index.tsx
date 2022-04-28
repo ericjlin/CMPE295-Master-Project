@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable, View, Text } from 'react-native';
+import { ColorSchemeName, Pressable, View, Text, Image } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -24,7 +24,7 @@ import { useContext } from 'react';
 import SensorView from '../screens/SensorView';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
-  const {user} = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
@@ -47,14 +47,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootNavigator(route) {
   return (
     <Stack.Navigator>
-      
+
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
-      <Stack.Screen name="Sensor" component={SensorView}/>
-      
+      <Stack.Screen name="Sensor" component={SensorView} />
+
     </Stack.Navigator>
   );
 }
@@ -67,7 +67,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
-  const {logout} = useContext(AuthContext)
+  const { logout } = useContext(AuthContext)
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
@@ -82,14 +82,17 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerLeft: () => (
             <Pressable
-              onPress={() => {}}
+              onPress={() => { }}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1
               })}>
-              <Text
-              style={{
-                left: 15
-              }}>Add Sensor</Text>
+              <Image style={{
+                height: 45,
+                width: 50,
+                left: 25,
+                resizeMode: 'cover',
+                marginBottom: 10
+              }} source={require("../assets/images/water-logo.png")} />
             </Pressable>
           ),
           // headerRight: () => (
@@ -123,13 +126,13 @@ function BottomTabNavigator() {
                 style={{ marginRight: 15 }}
               /> */}
               <Text
-              style={{
-                right: 15
-              }}>Logout</Text>
+                style={{
+                  right: 15
+                }}>Logout</Text>
             </Pressable>
           ),
         })}
-        
+
       />
       <BottomTab.Screen
         name="Map"
@@ -139,14 +142,17 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerLeft: () => (
             <Pressable
-              onPress={() => {}}
+              onPress={() => { }}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1
               })}>
-              <Text
-              style={{
-                left: 15
-              }}>Add Sensor</Text>
+              <Image style={{
+                height: 45,
+                width: 50,
+                left: 25,
+                resizeMode: 'cover',
+                marginBottom: 10
+              }} source={require("../assets/images/water-logo.png")} />
             </Pressable>
           ),
           headerRight: () => (
@@ -162,9 +168,9 @@ function BottomTabNavigator() {
                 style={{ marginRight: 15 }}
               /> */}
               <Text
-              style={{
-                right: 15
-              }}>Logout</Text>
+                style={{
+                  right: 15
+                }}>Logout</Text>
             </Pressable>
           ),
         }}
