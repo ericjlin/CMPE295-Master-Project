@@ -155,20 +155,20 @@ export const grabSensorData = (sensorType: string) => {
     }
 }
 
-export const getAllSensors = () => {
+export const getAllSensors = (email: any) => {
     const requestOptions = {
         method: 'GET'
       };
 
-    return fetch("http://localhost:3000/user/getAllSensors?email=pe295@sj.ed", requestOptions);
+    return fetch("http://localhost:3000/user/getAllSensors?email=" + email, requestOptions);
 }
 
-export const getSensorData = (id: Number) => {
+export const getSensorData = (id: Number, email: any) => {
     const requestOptions = {
         method: 'GET'
     };
 
-    return fetch("http://localhost:3000/user/getSensorData?email=pe295@sj.ed&deviceId=" + id, requestOptions);
+    return fetch("http://localhost:3000/user/getSensorData?email=" + email + "&deviceId=" + id, requestOptions);
 } 
 
 export const editSensor = (id: Number, email: any, location: any, type: any, threshold: number, name: string) => {

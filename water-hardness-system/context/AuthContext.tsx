@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children})=> {
       console.log(email,password)
       axios.post("http://127.0.0.1:3000/user/signin", {email, password}).then((response)=>{
         if(response.data.status==="SUCCESSED")
-           setUser(true)
+           setUser(email)
       }).catch((e)=>{
         console.log(e)
       })

@@ -7,15 +7,17 @@ import { RootTabScreenProps } from '../types';
 import SensorListScrollContainer from './SensorListScrollContainer';
 import SensorListCard from './SensorListCard';
 import { Modal, Pressable } from "react-native"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { getAllSensors } from './services';
 import { io } from "socket.io-client";
+import { AuthContext } from '../context/AuthContext';
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+  const { user } = useContext(AuthContext)
   var sensorData;
   const [sensorDat, setSensorData] = useState({});
   const [alert, setAlert] = useState(false);
@@ -49,7 +51,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
   socket.emit("send_message", {message: "Hello!"});
 
   useEffect(() => {
-    getAllSensors()
+    getAllSensors(user)
     .then(resp => resp.json())
     .then(data => {
       setListOfSensors(data.message.sensorList);

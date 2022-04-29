@@ -13,7 +13,7 @@ import {
     Dimensions,
     TextInput,
 } from "react-native";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useState, useContext } from "react";
 import {
     VictoryLine,
     VictoryChart,
@@ -27,10 +27,12 @@ import { grabSensorData, getSensorData, editSensor } from "./services";
 import { AntDesign } from "@expo/vector-icons";
 import FormInput from "../components/FormInput";
 import FormButton from "../components/FormButton";
+import { AuthContext } from '../context/AuthContext';
 
 const optionsPerPage = [2, 3, 4];
 
 const SensorView = ({ route, navigation }) => {
+    const { user } = useContext(AuthContext)
     const [page, setPage] = React.useState<number>(0);
     const [itemsPerPage, setItemsPerPage] = React.useState<any>(
         optionsPerPage[0]
@@ -45,7 +47,8 @@ const SensorView = ({ route, navigation }) => {
     const data1 = route.params.payload;
     const [sensorType, setSensorType] = useState(data1.type);
     const [sensorName, setSensorName] = useState(data1.name);
-    const [sensorThreshold, setSensorThreshold] = useState(data1.threshold);
+    // const [sensorThreshold, setSensorThreshold] = useState(data1.threshold);
+    const [sensorThreshold, setSensorThreshold] = useState("");
     const [thresholdData, setThresholdData] = useState([]);
     const [items, setItems] = useState([
         { label: "TDS", value: "tds_value" },
@@ -103,7 +106,7 @@ const SensorView = ({ route, navigation }) => {
         let x = grabSensorData(currentSensor);
         setSensorID(data1.id);
         setLocation(data1.location);
-        getSensorData(data1.id)
+        getSensorData(data1.id, user)
             .then((resp) => resp.json())
             .then((data) => {
                 if (data.status === "SUCCESSED") {
@@ -222,7 +225,11 @@ const SensorView = ({ route, navigation }) => {
                     </View>
                 </View>
             </Modal>
-
+            <ScrollView
+                style={{
+                    top: 5,
+                }}
+            >
             <View
                 style={{
                     flex: 1,
@@ -290,11 +297,7 @@ const SensorView = ({ route, navigation }) => {
                 </View>
             </TouchableOpacity>
             {/* </View> */}
-            <ScrollView
-                style={{
-                    top: 5,
-                }}
-            >
+            
                 <VictoryChart
                     width={425}
                     height={400}
