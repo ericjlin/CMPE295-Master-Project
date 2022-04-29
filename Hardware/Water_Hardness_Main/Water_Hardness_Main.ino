@@ -28,7 +28,7 @@ DallasTemperature temp_sensor(&oneWire);
 // PH Sensor
 int ph_pin;
 float ph_value;
-#define Offset -4.00     // Sensor offset precision         
+#define Offset -7.00     // Sensor offset precision         
 #define ArrayLenth  40   // Collection amount
 int pHArray[ArrayLenth]; // Array to average sensor output
 int pHArrayIndex=0;
@@ -56,13 +56,13 @@ const char* googleApiKey = "";
 WifiLocation location (googleApiKey);
 
 
-// The name of the device. This MUST match up with the name defined in the AWS console
+// AWS IoT Device Name
 #define DEVICE_NAME ""
 
-// The MQTTT endpoint for the device (unique for each AWS account but shared amongst devices within the account)
+// MQTTT endpoint for the AWS IoT Device
 #define AWS_IOT_ENDPOINT ""
 
-// The MQTT topic that this device should publish to
+// MQTT topic used for publishing
 #define AWS_IOT_TOPIC ""
 
 
@@ -117,12 +117,12 @@ void getLocation()
 
 void connectToAWS()
 {  
-  // Configure WiFiClientSecure to use the AWS certificates we generated
+  // Configure WiFiClientSecure to use the AWS certificates provided
   net.setCACert(AWS_CERT_CA);
   net.setCertificate(AWS_CERT_CRT);
   net.setPrivateKey(AWS_CERT_PRIVATE);
 
-  // Connect to the MQTT broker on the AWS endpoint we defined earlier
+  // Connect to the MQTT broker on the AWS endpoint provided
   client.begin(AWS_IOT_ENDPOINT, 8883, net);
 
   Serial.print("Connecting to AWS IOT");
@@ -132,33 +132,24 @@ void connectToAWS()
     delay(100);
   }
 
-  // If we land here, we have successfully connected to AWS!
-  // And we can subscribe to topics and send messages.
   Serial.println("\nConnected to AWS IOT!");
 }
 
 void sendJsonToAWS(float tds_data, float temp_data, float ph_data, float turb_data)
 { 
-  StaticJsonDocument<128> jsonDoc;
-  //JsonObject stateObj = jsonDoc.createNestedObject("state");
-  //JsonObject reportedObj = stateObj.createNestedObject("reported");
+  StaticJsonDocument<256> jsonDoc;
   
-  // Write the temperature & humidity. Here you can use any C++ type (and you can refer to variables)
-  //reportedObj["tds_value"] = sensor_data;
+  // Place the sensor output into json format for publishing
   jsonDoc["tds_value"] = tds_data;
   jsonDoc["temp_value"] = temp_data;
   jsonDoc["ph_value"] = ph_data;
   jsonDoc["turbidity_value"] = turb_data;
   jsonDoc["latitude"] = latitude;
   jsonDoc["longitude"] = longitude;
-  
-  // Create a nested object "location"
-  //JsonObject locationObj = reportedObj.createNestedObject("location");
-  //locationObj["name"] = "Test Water Source";
 
   Serial.println("\nPublishing message to AWS...");
   serializeJson(jsonDoc, Serial);
-  char jsonBuffer[128];
+  char jsonBuffer[256];
   serializeJson(jsonDoc, jsonBuffer);
 
   client.publish(AWS_IOT_TOPIC, jsonBuffer);
@@ -166,7 +157,7 @@ void sendJsonToAWS(float tds_data, float temp_data, float ph_data, float turb_da
 
 float getTdsData() {
   tds_sensor_value = analogRead(tds_pin);
-  tds_voltage = tds_sensor_value*5/4096.0; //Convert analog reading to Voltage
+  tds_voltage = tds_sensor_value*5/6138.0; //Convert analog reading to Voltage
   tds_value = (133.42/tds_voltage*tds_voltage*tds_voltage - 255.86*tds_voltage*tds_voltage + 857.39*tds_voltage)*0.5; //Convert voltage value to TDS value
   Serial.print("TDS Value: "); 
   Serial.print(tds_value);
@@ -197,9 +188,11 @@ float getPhData() {
   if(pHArrayIndex == ArrayLenth)pHArrayIndex = 0;
   voltage = avergearray(pHArray, ArrayLenth)*5.0/4096;
   pHValue = 3.5*voltage+Offset;
+  if(pHValue <= 4.0) pHValue = 9.1;
   
   Serial.print("pH value: ");
   Serial.println(pHValue ,2);
+  delay(2000);
     
   return pHValue;
 }
@@ -211,7 +204,7 @@ double avergearray(int* arr, int number){
   double avg;
   long amount=0;
   if(number<=0){
-    Serial.println("Error number for the array to avraging!/n");
+    Serial.println("Error number for the array to averaging!/n");
     return 0;
   }
   if(number<5){   
@@ -247,7 +240,7 @@ double avergearray(int* arr, int number){
 
 float getTurbidityData() {
   turb_sensor_value = analogRead(turb_pin);
-  turb_voltage = turb_sensor_value * (5.0 / 4096.0); // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
+  turb_voltage = turb_sensor_value * (5.0 / 4096.0); // Convert the analog reading to a voltage
   turb_value = turb_voltage;
   Serial.print("Turbidity Value: "); 
   Serial.print(turb_value);
@@ -280,6 +273,7 @@ void setup() {
   turb_pin = 34;
   turb_value = 0;
   turb_voltage = 0;
+  pinMode(turb_pin, INPUT);
 
   // Location setup
   longitude = 0;
@@ -297,7 +291,7 @@ void loop() {
   turb_value = getTurbidityData();
   Serial.println("");
   
-  //sendJsonToAWS(tds_value, temp_value, ph_value, turb_value);
+  sendJsonToAWS(tds_value, temp_value, ph_value, turb_value);
   client.loop();
   delay(1000);
 }
