@@ -54,6 +54,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
     getAllSensors(user)
     .then(resp => resp.json())
     .then(data => {
+      console.log("DEBUGDEBUGDEBUG", data);
       setListOfSensors(data.message.sensorList);
     }).catch(err => {
       console.log(err);

@@ -12,6 +12,7 @@ import {
     SafeAreaView,
     Dimensions,
     TextInput,
+    RefreshControl
 } from "react-native";
 import React, { memo, useEffect, useState, useContext } from "react";
 import {
@@ -56,6 +57,28 @@ const SensorView = ({ route, navigation }) => {
         { label: "Turbidity", value: "turbidity_value" },
         { label: "Temperature", value: "temp_value" },
     ]);
+    const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    let x = grabSensorData(currentSensor);
+    getSensorData(data1.id, user)
+            .then((resp) => resp.json())
+            .then((data) => {
+                if (data.status === "SUCCESSED") {
+                    sectionData(data.message, currentSensor);
+                    console.log("debugdebug", thresholdData);
+                    setRefreshing(false);
+                } else {
+                    console.log(data);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        setSensorData(x);
+    
+  }, []);
 
     const sectionData = (input, sensorType) => {
         setSensorData(
@@ -229,6 +252,12 @@ const SensorView = ({ route, navigation }) => {
                 style={{
                     top: 5,
                 }}
+                refreshControl={
+                    <RefreshControl 
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
             >
             <View
                 style={{
