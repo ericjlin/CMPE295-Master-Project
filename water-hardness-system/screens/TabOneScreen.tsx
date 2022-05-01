@@ -48,7 +48,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
     },
   ]);
   var socket = io('http://127.0.0.1:3000');
-  socket.emit("send_message", {message: "Hello!"});
+  socket.emit("newUser", {userEmail: user});
 
   useEffect(() => {
     getAllSensors(user)
