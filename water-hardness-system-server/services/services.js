@@ -6,6 +6,8 @@ const SensorData = require("../models/SensorData");
 const CityAve = require("../models/CityAve");
 const XMLHttpRequest = require('xhr2');
 const { sendMessage } = require('../utils/socket_io');
+const { getAllusers } = require('../utils/socket_io');
+const { getUser } = require('../utils/socket_io');
 require('dotenv').config();
 
 const userSignup = async (req, res) => {
@@ -452,14 +454,48 @@ const fetchSensorData = async () => {
                     console.log("No data");
                 } else {
                     for (i = 0; i < data.length; i++) {
+                        var device_id = data[i].device_id;
                         var lat = data[i].device_data.latitude;
                         var lng = data[i].device_data.longitude;
                         var values = [];
-                        values.push(data[i].device_data.ph_value);
-                        values.push(data[i].device_data.tds_value);
-                        values.push(data[i].device_data.temp_value);
-                        values.push(data[i].device_data.turbidity_value);
-                        console.log(values);
+                        ph_value = data[i].device_data.ph_value;
+                        tds_value = data[i].device_data.tds_value;
+                        temp_value = data[i].device_data.temp_value;
+                        turbidity_value = data[i].device_data.turbidity_value;
+
+                        values.push(ph_value);
+                        values.push(tds_value);
+                        values.push(temp_value);
+                        values.push(turbidity_value);
+                        allUsers = getAllusers();
+
+                        console.log(allUsers);
+                        for (j = 0; j < allUsers.length; j++) {
+                            User.query().where("email").eq(allUsers[j].userEmail).exec((error, data) => {
+                                if (error) {
+                                    console.log(error);
+                                } else {
+                                    socketId = getUser(data[0].email, allUsers).socketId;
+                                    sensorList = data[0].sensorList;
+                                    for (k = 0; k < sensorList.length; k++) {
+                                        if (sensorList[k].id == device_id) {
+                                            if (ph_value > sensorList[k].ph_threshold) {
+                                                sendMessage(socketId, "sendNotification", "PH Exceed");
+                                            }
+                                            if (tds_value > sensorList[k].tds_threshold) {
+                                                sendMessage(socketId, "sendNotification", "tds Exceed");
+                                            }
+                                            if (temp_value > sensorList[k].temp_threshold) {
+                                                sendMessage(socketId, "sendNotification", "temp Exceed");
+                                            }
+                                            if (turbidity_value > sensorList[k].turbidity_threshold) {
+                                                sendMessage(socketId, "sendNotification", "Turbidity Exceed");
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        }
                         getCity(lat, lng, values);
                     }
                 }
