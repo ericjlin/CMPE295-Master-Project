@@ -361,119 +361,113 @@ const getCityAve = async (req, res) => {
     }
 }
 
-function getCity(lat, lng, type, value) {
-    var xhr = new XMLHttpRequest();
-    // Paste your LocationIQ token below.
-    xhr.open('GET', "https://us1.locationiq.com/v1/reverse.php?key=" + process.env.MAP_KEY + "&lat=" +
-    lat + "&lon=" + lng + "&format=json", true);
-    xhr.send();
-    xhr.onreadystatechange = processRequest;
-    // xhr.addEventListener("readystatechange", processRequest, false);
+const getCity = async (lat, lng, values) => {
+    try {
+        var xhr = new XMLHttpRequest();
+        // Paste your LocationIQ token below.
+        xhr.open('GET', "https://us1.locationiq.com/v1/reverse.php?key=" + process.env.MAP_KEY + "&lat=" +
+        lat + "&lon=" + lng + "&format=json", true);
+        xhr.send();
+        xhr.onreadystatechange = processRequest;
+        // xhr.addEventListener("readystatechange", processRequest, false);
 
-    function processRequest(e) {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var response = JSON.parse(xhr.responseText);
-            var city = response.address.city;
-            if (city) {
-                updateAve(city, type, value);
+        function processRequest(e) {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var response = JSON.parse(xhr.responseText);
+                var city = response.address.city;
+                if (city) {
+                    updateAve(city, "ph", values[0]);
+                    updateAve(city, "tds", values[1]);
+                    updateAve(city, "temp", values[2]);
+                    updateAve(city, "turbidity", values[3]);
+                }
             }
         }
-    }
 
-    const updateAve = async (city, type, value) => {
-        try {
-            console.log("update city average...");
-            CityAve.scan().where("city").eq(city).and().where("type").eq(type).exec((error, data) => {
-                if (error) {
-                    let count = 1;
-                    const newDoc = new CityAve({
-                        city,
-                        type,
-                        average: value,
-                        count,
-                    })
-                    CityAve.create(newDoc, (error, result) => {
-                        if (error) {
-                            console.log(error);
-                        } else {
-                            console.log(result);
-                        }
-                    })
-                } else {
-                    console.log(data[0]);
-                    var ave = data[0].average;
-                    var count = data[0].count;
-                    var newCount = count + 1;
-                    var newAve = (ave * count + value) / newCount; 
-
-                    CityAve.update(
-                        {
-                            "city": city,
-                            "type": type,
-                        },
-                        {
-                            "count": newCount,
-                            "average": newAve,
-                        },
-                        (error, doc) => {
+        const updateAve = async (city, type, value) => {
+            try {
+                console.log("update city average...");
+                CityAve.scan().where("city").eq(city).and().where("type").eq(type).exec((error, data) => {
+                    if (error) {
+                        let count = 1;
+                        const newDoc = new CityAve({
+                            city,
+                            type,
+                            average: value,
+                            count,
+                        })
+                        CityAve.create(newDoc, (error, result) => {
                             if (error) {
                                 console.log(error);
                             } else {
-                                console.log(doc);
+                                console.log(result);
                             }
-                        }
-                    );
-                }
-            })
-        } catch (e) {
-            console.log(e);
+                        })
+                    } else {
+                        console.log(data[0]);
+                        var ave = data[0].average;
+                        var count = data[0].count;
+                        var newCount = count + 1;
+                        var newAve = (ave * count + value) / newCount; 
+
+                        CityAve.update(
+                            {
+                                "city": city,
+                                "type": type,
+                            },
+                            {
+                                "count": newCount,
+                                "average": newAve,
+                            },
+                            (error, doc) => {
+                                if (error) {
+                                    console.log(error);
+                                } else {
+                                    console.log(doc);
+                                }
+                            }
+                        );
+                    }
+                })
+            } catch (e) {
+                console.log("Inside update average function: " + e);
+            }
         }
+    } catch(e) {
+        console.log("Inside getCity function: " + e);
     }
 }
 
-function fetchSensorData () {
-    var curTime = Date.now();
-    var tenMinsBefore = curTime - 50000 * 60 * 1000; 
-
-    SensorData.scan().where("sample_time").ge(tenMinsBefore).exec((error, data) => {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log(data);
-            if (data.count === 0) {
-                console.log("No data");
+const fetchSensorData = async () => {
+    try {
+        var curTime = Date.now();
+        var tenMinsBefore = curTime - 50000 * 60 * 1000; 
+    
+        SensorData.scan().where("sample_time").ge(tenMinsBefore).exec((error, data) => {
+            if (error) {
+                console.log(error);
             } else {
-                var lat = data[0].device_data.latitude;
-                var lng = data[0].device_data.longitude;
-                if (data[0].device_data.tds_value) {
-                    var type = "tds";
-                    var value = data[0].device_data.tds_value;
-                    getCity(lat, lng, type, value);
-                    if (value > 200) {
-                        sendMessage("sendNotification", "TDS Exceed Thredhold");
+                console.log(data);
+                if (data.count === 0) {
+                    console.log("No data");
+                } else {
+                    for (i = 0; i < data.length; i++) {
+                        var lat = data[i].device_data.latitude;
+                        var lng = data[i].device_data.longitude;
+                        var values = [];
+                        values.push(data[i].device_data.ph_value);
+                        values.push(data[i].device_data.tds_value);
+                        values.push(data[i].device_data.temp_value);
+                        values.push(data[i].device_data.turbidity_value);
+                        console.log(values);
+                        getCity(lat, lng, values);
                     }
                 }
-                if (data[0].device_data.turbidity_value) {
-                    var type = "turbidity";
-                    var value = data[0].device_data.turbidity_value;
-                    getCity(lat, lng, type, value);
-                }
-
-                if (data[0].device_data.temp_value) {
-                    var type = "temp";
-                    var value = data[0].device_data.temp_value;
-                    getCity(lat, lng, type, value);
-                }
-
-                if (data[0].device_data.ph_value) {
-                    var type = "ph";
-                    var value = data[0].device_data.ph_value;
-                    getCity(lat, lng, type, value);
-                }
-
             }
-        }
-    })
+        }) 
+    } catch(e) {
+        console.log("Inside fetchSensorData function: " + e);
+    }
 }
 
 module.exports = {
