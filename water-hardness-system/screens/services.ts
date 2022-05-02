@@ -160,7 +160,7 @@ export const getAllSensors = (email: any) => {
         method: 'GET'
       };
 
-    return fetch("http://localhost:3000/user/getAllSensors?email=" + email, requestOptions);
+    return fetch("http://127.0.0.1:3000/user/getAllSensors?email=" + email, requestOptions);
 }
 
 export const getSensorData = (id: Number, email: any) => {
@@ -168,10 +168,10 @@ export const getSensorData = (id: Number, email: any) => {
         method: 'GET'
     };
 
-    return fetch("http://localhost:3000/user/getSensorData?email=" + email + "&deviceId=" + id, requestOptions);
+    return fetch("http://127.0.0.1:3000/user/getSensorData?email=" + email + "&deviceId=" + id, requestOptions);
 } 
 
-export const editSensor = (id: Number, email: any, location: any, type: any, threshold: number, name: string) => {
+export const editSensor = (id: Number, email: any, location: any, ph_threshold: any, tds_threshold: any, temp_threshold: any, turbidity_threshold: any, name: string) => {
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -179,9 +179,24 @@ export const editSensor = (id: Number, email: any, location: any, type: any, thr
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email, id, location, type, threshold, name
+            email, id, location, tds_threshold, turbidity_threshold, temp_threshold, ph_threshold, name
           }),
     };
 
-    return fetch("http://localhost:3000/user/updateSensorInfo", requestOptions)
+    return fetch("http://127.0.0.1:3000/user/updateSensorInfo", requestOptions)
+}
+
+export const addNewSensor = (id: Number, email: any, location: any) => {
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email, id, location
+          }),
+    };
+
+    return fetch("http://127.0.0.1:3000/user/addNewSensor", requestOptions)
 }

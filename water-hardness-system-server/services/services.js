@@ -171,10 +171,10 @@ const addNewSensor = async (req, res) => {
                         "id": id,
                         "location": location,
                         "name": "",
-                        "tds_threshold": 304.96,
-                        "turbidity_threshold": 2.08,
-                        "temp_threshold": 65.52,
-                        "ph_threshold": 8.82,
+                        "tds_threshold": 310,
+                        "turbidity_threshold": 4,
+                        "temp_threshold": 80,
+                        "ph_threshold": 10,
 
                     },
                 }
@@ -443,7 +443,7 @@ const getCity = async (lat, lng, values) => {
 const fetchSensorData = async () => {
     try {
         var curTime = Date.now();
-        var tenMinsBefore = curTime - 50000 * 60 * 1000; 
+        var tenMinsBefore = curTime - 5000;
     
         SensorData.scan().where("sample_time").ge(tenMinsBefore).exec((error, data) => {
             if (error) {
