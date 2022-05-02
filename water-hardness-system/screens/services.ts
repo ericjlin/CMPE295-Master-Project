@@ -171,7 +171,7 @@ export const getSensorData = (id: Number, email: any) => {
     return fetch("http://127.0.0.1:3000/user/getSensorData?email=" + email + "&deviceId=" + id, requestOptions);
 } 
 
-export const editSensor = (id: Number, email: any, location: any, ph_threshold: any, tds_threshold: any, temp_threshold: any, turbidity_threshold: any, name: string) => {
+export const editSensor = (id: Number, email: any, location: any, ph_threshold: Number, tds_threshold: Number, temp_threshold: Number, turbidity_threshold: Number, name: string) => {
     const requestOptions = {
         method: 'POST',
         headers: {

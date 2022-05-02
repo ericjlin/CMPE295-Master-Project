@@ -3,7 +3,6 @@ import {
     Alert,
     Image,
     Modal,
-    TouchableOpacity,
     TouchableNativeFeedback,
     View,
     StyleSheet,
@@ -29,6 +28,7 @@ import { AntDesign } from "@expo/vector-icons";
 import FormInput from "../components/FormInput";
 import FormButton from "../components/FormButton";
 import { AuthContext } from '../context/AuthContext';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const optionsPerPage = [2, 3, 4];
 
@@ -119,7 +119,7 @@ const SensorView = ({ route, navigation }) => {
 
     const addSensor = () => {
         console.log("-------------Before edit sensor info---------------");
-        editSensor(parseInt(data1.id), user, location, phThreshold, tdsThreshold, tempThreshold, turbidityThreshold, sensorName)
+        editSensor(parseInt(data1.id), user, location, parseInt(phThreshold), parseInt(tdsThreshold), parseInt(tempThreshold), parseInt(turbidityThreshold), sensorName)
             .then((resp) => resp.json())
             .then((data) => {
                 console.log("SUCCESS", data);
@@ -270,7 +270,7 @@ const SensorView = ({ route, navigation }) => {
                                     setLocation(newloc);
                                 }}
                                 numberOfLines={1}
-                                placeholder={"Name..."}
+                                placeholder={"Locaiton..."}
                                 placeholderTextColor="#666"
                             />
                         </View>
@@ -278,7 +278,7 @@ const SensorView = ({ route, navigation }) => {
                         <TouchableOpacity
                             onPress={() => {
                                 console.log("Before add sensor");
-                                // addSensor();
+                                addSensor();
                                 setModalVisible(!modalVisible);
                             }}
                             style={{ marginTop: 15 }}
@@ -345,11 +345,11 @@ const SensorView = ({ route, navigation }) => {
                     setModalVisible(true);
                 }}
                 style={{
-                    top: 10,
+                    top: 5,
                     right: 40,
                     borderWidth: 1,
                     borderRadius: 10,
-                    position: "absolute",
+                    // position: "absolute",
                     alignItems: "center",
                     padding: 10,
                     zIndex: 1,
