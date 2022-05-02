@@ -16,11 +16,13 @@ import { getAllSensors, addNewSensor } from './services';
 import { io } from "socket.io-client";
 import { AuthContext } from '../context/AuthContext';
 
+
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   const { user } = useContext(AuthContext)
   var sensorData;
   const [sensorDat, setSensorData] = useState({});
   const [alert, setAlert] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [listOfSensors, setListOfSensors] = useState([
     {
       name: 'Master Bedroom',
@@ -47,8 +49,23 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
       img_url: '',
     },
   ]);
-  var socket = io('http://127.0.0.1:3000');
+  var socket = io('http://localhost:3000');
   socket.emit("newUser", {userEmail: user});
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getAllSensors(user)
+    .then(resp => resp.json())
+    .then(data => {
+      console.log("DEBUGDEBUGDEBUG", data);
+      setListOfSensors(data.message.sensorList);
+      setRefreshing(false);
+    }).catch(err => {
+      console.log(err);
+      setRefreshing(false);
+    });
+    
+  }, []);
 
   useEffect(() => {
     getAllSensors(user)
@@ -61,34 +78,9 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
     });
 
     socket.on("sendNotification", (data) => {
+      console.log("DEBUG plz work");
       Alert.alert(data);
     });
-
-    if (alert === true) {
-      Alert.alert(
-        "Sensor over threshold!",
-        "Bedroom",
-        [
-          {
-            text: "Go to Sensor",
-            onPress: () => {
-              setAlert(false);
-              navigation.push('Sensor', {
-                payload: {
-                  name: 'Master Bedroom',
-                  img_url: '',
-                },
-              });
-            }
-          },
-          {
-            text: "Dismiss",
-            onPress: () => setAlert(false),
-            style: "cancel"
-          },
-        ]
-      );
-    }
 
     return function cleanup() {
       console.log("DEBUG cleanup");
@@ -176,7 +168,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
         </View>
       </Modal>
       {/* *************************************************** */}
-      <SensorListScrollContainer title={'Sensors'} setModalVisible={setModalVisible} modalVisible={modalVisible}>
+      <SensorListScrollContainer title={'Sensors'} setModalVisible={setModalVisible} modalVisible={modalVisible} refreshing={refreshing} onRefresh={onRefresh}>
         {listOfSensors.map((obj) => {
           return (<SensorListCard key={obj.name} navigation={navigation} payload={obj} />);
         })}

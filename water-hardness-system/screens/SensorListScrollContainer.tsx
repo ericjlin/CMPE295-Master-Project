@@ -1,9 +1,9 @@
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View, RefreshControl } from 'react-native';
 import React, { memo } from 'react';
 import { AntDesign } from '@expo/vector-icons';
 import { color } from 'react-native-reanimated';
 
-const SensorListScrollContainer = ({ children, title, setModalVisible }) => {
+const SensorListScrollContainer = ({ children, title, setModalVisible, refreshing, onRefresh }) => {
   const bg_color = '#1c1b21';
 
   return (
@@ -25,7 +25,7 @@ const SensorListScrollContainer = ({ children, title, setModalVisible }) => {
           style={{
             fontWeight: 'bold',
             fontSize: 20,
-            marginTop: 10,
+            marginTop: 20,
             marginBottom: 10,
             marginLeft: 20,
             marginRight: 5,
@@ -36,7 +36,12 @@ const SensorListScrollContainer = ({ children, title, setModalVisible }) => {
         </Text>
         <AntDesign onPress={() => { setModalVisible(true) }} style={{ textAlign: "right", color: "green", marginBottom: 5, marginTop: 10 }} name="plus" size={25} color="#666" />
       </View>
-      <ScrollView horizontal={false}>{children}</ScrollView>
+      <ScrollView horizontal={false} refreshControl={
+                    <RefreshControl 
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                } >{children}</ScrollView>
     </View>
   );
 };
