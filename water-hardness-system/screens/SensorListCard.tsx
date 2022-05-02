@@ -1,5 +1,5 @@
 import { Text, Image, TouchableOpacity, View } from 'react-native';
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 
 const SensorListCard = props => {
 
@@ -36,7 +36,7 @@ const SensorListCard = props => {
               height: 120,
               width: 120,
               borderRadius: '50%',
-            }} source={require("../assets/images/icon.png")} />
+            }} source={require("../assets/images/water-logo.png")} />
         </View>
         <View
           style={{
@@ -56,12 +56,12 @@ const SensorListCard = props => {
               textAlign: 'left',
             }}
           >
-            {props.payload.name}
+            {props.payload.name === '' ? props.payload.location : props.payload.name}
           </Text>
           <View style={{
               flexDirection: 'row',
           }}>
-            <Text>Alerts: 1</Text>
+            <Text>Location:</Text>
             <Text> </Text>
             <Text>{props.payload.location}</Text>
           </View>
