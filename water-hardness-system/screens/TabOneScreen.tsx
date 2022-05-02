@@ -12,7 +12,7 @@ import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { getAllSensors } from './services';
+import { getAllSensors, addNewSensor } from './services';
 import { io } from "socket.io-client";
 import { AuthContext } from '../context/AuthContext';
 
@@ -100,6 +100,15 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 
 
   const addSensor = (name, img_url) => {
+
+    addNewSensor(parseInt(sensorID), user, location)
+      .then((resp) => resp.json())
+      .then((data) => {
+          console.log("SUCCESS", data);
+      })
+      .catch((err) => {
+          console.log("ERROR", err);
+    });
     setLocation("")
     setsensorID("")
     setListOfSensors(oldList => [...oldList, { name, img_url }])

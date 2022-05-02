@@ -49,7 +49,11 @@ const SensorView = ({ route, navigation }) => {
     const [sensorType, setSensorType] = useState(data1.type);
     const [sensorName, setSensorName] = useState(data1.name);
     // const [sensorThreshold, setSensorThreshold] = useState(data1.threshold);
-    const [sensorThreshold, setSensorThreshold] = useState("");
+    const [phThreshold, setPhThreshold] = useState("");
+    const [tempThreshold, setTempThreshold] = useState("");
+    const [tdsThreshold, setTDSThreshold] = useState("");
+    const [turbidityThreshold, setTurbidityThreshold] = useState("");
+
     const [thresholdData, setThresholdData] = useState([]);
     const [items, setItems] = useState([
         { label: "TDS", value: "tds_value" },
@@ -114,12 +118,15 @@ const SensorView = ({ route, navigation }) => {
     };
 
     const addSensor = () => {
-        editSensor(data1.id, "", location, sensorType, sensorThreshold, sensorName)
+        console.log("-------------Before edit sensor info---------------");
+        editSensor(parseInt(data1.id), user, location, phThreshold, tdsThreshold, tempThreshold, turbidityThreshold, sensorName)
             .then((resp) => resp.json())
             .then((data) => {
                 console.log("SUCCESS", data);
+                console.log("-------------Success edit sensor info---------------");
             })
             .catch((err) => {
+                console.log("-------------Failed edit sensor info---------------");
                 console.log("ERROR", err);
             });
     };
@@ -192,14 +199,62 @@ const SensorView = ({ route, navigation }) => {
                                 <AntDesign name={"key"} size={25} color="#666" />
                             </View>
                             <TextInput
-                                value={sensorThreshold.toString()}
+                                value={phThreshold.toString()}
                                 keyboardType="numeric"
                                 style={styles.input}
                                 onChangeText={(text) => {
-                                    setSensorThreshold(text);
+                                    setPhThreshold(text);
                                 }}
                                 numberOfLines={1}
-                                placeholder={"Threshold..."}
+                                placeholder={"PH Threshold..."}
+                                placeholderTextColor="#666"
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <View style={styles.iconStyle}>
+                                <AntDesign name={"key"} size={25} color="#666" />
+                            </View>
+                            <TextInput
+                                value={tempThreshold.toString()}
+                                keyboardType="numeric"
+                                style={styles.input}
+                                onChangeText={(text) => {
+                                    setTempThreshold(text);
+                                }}
+                                numberOfLines={1}
+                                placeholder={"Temperature Threshold..."}
+                                placeholderTextColor="#666"
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <View style={styles.iconStyle}>
+                                <AntDesign name={"key"} size={25} color="#666" />
+                            </View>
+                            <TextInput
+                                value={tdsThreshold.toString()}
+                                keyboardType="numeric"
+                                style={styles.input}
+                                onChangeText={(text) => {
+                                    setTDSThreshold(text);
+                                }}
+                                numberOfLines={1}
+                                placeholder={"TDS Threshold..."}
+                                placeholderTextColor="#666"
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <View style={styles.iconStyle}>
+                                <AntDesign name={"key"} size={25} color="#666" />
+                            </View>
+                            <TextInput
+                                value={turbidityThreshold.toString()}
+                                keyboardType="numeric"
+                                style={styles.input}
+                                onChangeText={(text) => {
+                                    setTurbidityThreshold(text);
+                                }}
+                                numberOfLines={1}
+                                placeholder={"Turbidity Threshold..."}
                                 placeholderTextColor="#666"
                             />
                         </View>
@@ -215,30 +270,15 @@ const SensorView = ({ route, navigation }) => {
                                     setLocation(newloc);
                                 }}
                                 numberOfLines={1}
-                                placeholder={"Location..."}
-                                placeholderTextColor="#666"
-                            />
-                        </View>
-
-                        <View style={styles.inputContainer}>
-                            <View style={styles.iconStyle}>
-                                <AntDesign name={"key"} size={25} color="#666" />
-                            </View>
-                            <TextInput
-                                value={sensorName}
-                                style={styles.input}
-                                onChangeText={(newType) => {
-                                    setSensorType(newType);
-                                }}
-                                numberOfLines={1}
-                                placeholder={"Sensor Type..."}
+                                placeholder={"Name..."}
                                 placeholderTextColor="#666"
                             />
                         </View>
 
                         <TouchableOpacity
                             onPress={() => {
-                                // addSensor()
+                                console.log("Before add sensor");
+                                // addSensor();
                                 setModalVisible(!modalVisible);
                             }}
                             style={{ marginTop: 15 }}
