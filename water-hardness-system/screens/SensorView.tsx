@@ -63,14 +63,15 @@ const SensorView = ({ route, navigation }) => {
     ]);
     const [refreshing, setRefreshing] = React.useState(false);
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    let x = grabSensorData(currentSensor);
-    getSensorData(data1.id, user)
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        let x = grabSensorData(currentSensor);
+        getSensorData(data1.id, user)
             .then((resp) => resp.json())
             .then((data) => {
                 if (data.status === "SUCCESSED") {
                     sectionData(data.message, currentSensor);
+                    setCurrentSensor("tds_value");
                     console.log("debugdebug", thresholdData);
                     setRefreshing(false);
                 } else {
@@ -81,12 +82,12 @@ const SensorView = ({ route, navigation }) => {
                 console.log(err);
             });
         setSensorData(x);
-    
-  }, []);
+
+    }, []);
 
     const sectionData = (input, sensorType) => {
         setSensorData(
-            input.map((obj) => {
+            input.reverse().map((obj) => {
                 return {
                     timestamp: new Intl.DateTimeFormat("en-US", {
                         // year: "numeric",
@@ -293,80 +294,82 @@ const SensorView = ({ route, navigation }) => {
                     top: 5,
                 }}
                 refreshControl={
-                    <RefreshControl 
+                    <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
                     />
                 }
             >
-            <View
-                style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    left: 25,
-                    zIndex: 1,
-                    bottom: 10,
-                }}
-            >
-                <Text
+                <View
                     style={{
-                        top: 20,
-                        fontSize: 20,
-                        padding: 5,
-                        height: 50,
+                        flex: 1,
+                        flexDirection: "row",
+                        justifyContent: "space-end",
+                        left: 25,
+                        zIndex: 1,
+                        bottom: 10,
                     }}
                 >
-                    {data1.name}
-                </Text>
-                <DropDownPicker
-                    style={{
-                        width: "35%",
-                        top: 20,
-                        left: 10,
-                    }}
-                    placeholder="Sensor Type"
-                    open={dropdownToggle}
-                    value={currentSensor}
-                    items={items}
-                    setOpen={setDropDownToggle}
-                    setValue={setCurrentSensor}
-                    setItems={setItems}
-                    dropDownContainerStyle={{
-                        backgroundColor: "#b3acac",
-                        top: 60,
-                        width: "35%",
-                        left: 10,
-                    }}
-                />
-            </View>
-            <TouchableOpacity
-                onPress={() => {
-                    setModalVisible(true);
-                }}
-                style={{
-                    top: 5,
-                    right: 40,
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    // position: "absolute",
-                    alignItems: "center",
-                    padding: 10,
-                    zIndex: 1,
-                }}
-            >
-                <View>
                     <Text
                         style={{
-                            fontSize: 20,
+                            top: 20,
+                            fontSize: 25,
+                            padding: 5,
+                            height: 50,
                         }}
                     >
-                        Edit
-          </Text>
+                        {data1.name === '' ? data1.location : data1.name}
+                    </Text>
+                    <DropDownPicker
+                        style={{
+                            width: "35%",
+                            top: 20,
+                            left: 10,
+                        }}
+                        placeholder="Sensor Type"
+                        open={dropdownToggle}
+                        value={currentSensor}
+                        items={items}
+                        setOpen={setDropDownToggle}
+                        setValue={setCurrentSensor}
+                        setItems={setItems}
+                        dropDownContainerStyle={{
+                            backgroundColor: "#b3acac",
+                            top: 60,
+                            width: "35%",
+                            left: 10,
+                        }}
+                    />
                 </View>
-            </TouchableOpacity>
-            {/* </View> */}
-            
+                <TouchableOpacity
+                    onPress={() => {
+                        setModalVisible(true);
+                    }}
+                    style={{
+                        top: -38,
+                        right: 40,
+                        left: 320,
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        // position: "absolute",
+                        alignItems: "center",
+                        padding: 20,
+                        zIndex: 1,
+                        width: 100
+                    }}
+                >
+                    <View>
+                        <Text
+                            style={{
+                                fontSize: 25,
+                            }}
+                        >
+                            Edit
+                    </Text>
+                </View>
+                </TouchableOpacity>
+                {/* </View> */}
+
                 <VictoryChart
                     width={425}
                     height={400}
