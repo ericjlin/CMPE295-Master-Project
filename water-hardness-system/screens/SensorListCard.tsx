@@ -32,11 +32,11 @@ const SensorListCard = props => {
             justifyContent: 'center',
           }}
         >
-            <Image style={{
-              height: 120,
-              width: 120,
-              borderRadius: '50%',
-            }} source={require("../assets/images/water-logo.png")} />
+          <Image style={{
+            height: 120,
+            width: 120,
+            borderRadius: '50%',
+          }} source={require("../assets/images/water-logo.png")} />
         </View>
         <View
           style={{
@@ -59,7 +59,7 @@ const SensorListCard = props => {
             {props.payload.name === '' ? props.payload.location : props.payload.name}
           </Text>
           <View style={{
-              flexDirection: 'row',
+            flexDirection: 'row',
           }}>
             <Text>Location:</Text>
             <Text> </Text>
@@ -67,13 +67,13 @@ const SensorListCard = props => {
           </View>
         </View>
         <View
-        style={{
-          marginLeft: 10,
-          marginRight: 10,
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+          style={{
+            marginLeft: 10,
+            marginRight: 10,
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
           <Text>Last Updated: </Text>
           <Text>09:31 AM</Text>
         </View>

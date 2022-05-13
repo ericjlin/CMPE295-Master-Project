@@ -406,7 +406,7 @@ const getCity = async (lat, lng, values) => {
                             }
                         })
                     } else {
-                        console.log(data[0]);
+                        // console.log(data[0]);
                         var ave = data[0].average;
                         var count = data[0].count;
                         var newCount = count + 1;
@@ -443,13 +443,13 @@ const getCity = async (lat, lng, values) => {
 const fetchSensorData = async () => {
     try {
         var curTime = Date.now();
-        var tenMinsBefore = curTime - 5000;
+        var tenMinsBefore = curTime - 1000;
     
         SensorData.scan().where("sample_time").ge(tenMinsBefore).exec((error, data) => {
             if (error) {
                 console.log(error);
             } else {
-                console.log(data);
+                // console.log(data);
                 if (data.count === 0) {
                     console.log("No data");
                 } else {
@@ -480,23 +480,23 @@ const fetchSensorData = async () => {
                                     for (k = 0; k < sensorList.length; k++) {
                                         if (sensorList[k].id == device_id) {
                                             if (ph_value > sensorList[k].ph_threshold) {
-                                                sendMessage(socketId, "sendNotification", "PH Exceed");
+                                                sendMessage(socketId, "sendNotification", "PH LEVELS THRESHOLD EXCEEDED");
                                             }
                                             if (tds_value > sensorList[k].tds_threshold) {
-                                                sendMessage(socketId, "sendNotification", "tds Exceed");
+                                                sendMessage(socketId, "sendNotification", "TDS LEVELS THRESHOLD EXCEEDED");
                                             }
                                             if (temp_value > sensorList[k].temp_threshold) {
-                                                sendMessage(socketId, "sendNotification", "temp Exceed");
+                                                sendMessage(socketId, "sendNotification", "TEMPERATURE LEVELS THRESHOLD EXCEEDED");
                                             }
                                             if (turbidity_value > sensorList[k].turbidity_threshold) {
-                                                sendMessage(socketId, "sendNotification", "Turbidity Exceed");
+                                                sendMessage(socketId, "sendNotification", "TURBIDITY LEVELS THRESHOLD EXCEEDED");
                                             }
                                         }
                                     }
                                 }
                             })
                         }
-                        getCity(lat, lng, values);
+                        // getCity(lat, lng, values);
                     }
                 }
             }

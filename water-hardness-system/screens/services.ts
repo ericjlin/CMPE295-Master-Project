@@ -1,5 +1,3 @@
-import * as AWS from 'aws-sdk';
-
 const tdsData = [
     {
         timestamp: "06:08:00 PM",
@@ -160,7 +158,7 @@ export const getAllSensors = (email: any) => {
         method: 'GET'
       };
 
-    return fetch("http://127.0.0.1:3000/user/getAllSensors?email=" + email, requestOptions);
+    return fetch("http://localhost:3000/user/getAllSensors?email=" + email, requestOptions);
 }
 
 export const getSensorData = (id: Number, email: any) => {
@@ -168,7 +166,7 @@ export const getSensorData = (id: Number, email: any) => {
         method: 'GET'
     };
 
-    return fetch("http://127.0.0.1:3000/user/getSensorData?email=" + email + "&deviceId=" + id, requestOptions);
+    return fetch("http://localhost:3000/user/getSensorData?email=" + email + "&deviceId=" + id, requestOptions);
 } 
 
 export const editSensor = (id: Number, email: any, location: any, ph_threshold: Number, tds_threshold: Number, temp_threshold: Number, turbidity_threshold: Number, name: string) => {
@@ -183,7 +181,7 @@ export const editSensor = (id: Number, email: any, location: any, ph_threshold: 
           }),
     };
 
-    return fetch("http://127.0.0.1:3000/user/updateSensorInfo", requestOptions)
+    return fetch("http://localhost:3000/user/updateSensorInfo", requestOptions)
 }
 
 export const addNewSensor = (id: Number, email: any, location: any) => {
@@ -198,5 +196,5 @@ export const addNewSensor = (id: Number, email: any, location: any) => {
           }),
     };
 
-    return fetch("http://127.0.0.1:3000/user/addNewSensor", requestOptions)
+    return fetch("http://localhost:3000/user/addNewSensor", requestOptions)
 }

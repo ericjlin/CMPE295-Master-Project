@@ -1,31 +1,25 @@
 import {
     Text,
     Alert,
-    Image,
     Modal,
-    TouchableNativeFeedback,
     View,
     StyleSheet,
     ScrollView,
-    Button,
-    SafeAreaView,
     Dimensions,
     TextInput,
     RefreshControl
 } from "react-native";
-import React, { memo, useEffect, useState, useContext } from "react";
+import React, { memo, useState, useContext } from "react";
 import {
     VictoryLine,
     VictoryChart,
     VictoryAxis,
     VictoryTheme,
 } from "victory-native";
-import { DataTable, Headline } from "react-native-paper";
-import { grey100 } from "react-native-paper/lib/typescript/styles/colors";
+import { DataTable } from "react-native-paper";
 import DropDownPicker from "react-native-dropdown-picker";
 import { grabSensorData, getSensorData, editSensor } from "./services";
 import { AntDesign } from "@expo/vector-icons";
-import FormInput from "../components/FormInput";
 import FormButton from "../components/FormButton";
 import { AuthContext } from '../context/AuthContext';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -46,9 +40,7 @@ const SensorView = ({ route, navigation }) => {
     const [location, setLocation] = useState("");
     const [sensorID, setSensorID] = useState("");
     const data1 = route.params.payload;
-    const [sensorType, setSensorType] = useState(data1.type);
     const [sensorName, setSensorName] = useState(data1.name);
-    // const [sensorThreshold, setSensorThreshold] = useState(data1.threshold);
     const [phThreshold, setPhThreshold] = useState("");
     const [tempThreshold, setTempThreshold] = useState("");
     const [tdsThreshold, setTDSThreshold] = useState("");
@@ -90,9 +82,6 @@ const SensorView = ({ route, navigation }) => {
             input.reverse().map((obj) => {
                 return {
                     timestamp: new Intl.DateTimeFormat("en-US", {
-                        // year: "numeric",
-                        // month: "2-digit",
-                        // day: "2-digit",
                         hour: "2-digit",
                         minute: "2-digit",
                         second: "2-digit",
@@ -347,13 +336,13 @@ const SensorView = ({ route, navigation }) => {
                     }}
                     style={{
                         top: -38,
-                        right: 40,
-                        left: 320,
+                        right: 50,
+                        left: 300,
                         borderWidth: 1,
                         borderRadius: 10,
                         // position: "absolute",
                         alignItems: "center",
-                        padding: 20,
+                        padding: 15,
                         zIndex: 1,
                         width: 100
                     }}
@@ -366,9 +355,8 @@ const SensorView = ({ route, navigation }) => {
                         >
                             Edit
                     </Text>
-                </View>
+                    </View>
                 </TouchableOpacity>
-                {/* </View> */}
 
                 <VictoryChart
                     width={425}
@@ -402,23 +390,6 @@ const SensorView = ({ route, navigation }) => {
 
                         </React.Fragment>
                     ) : null}
-                    {/* <VictoryAxis
-                        dependentAxis={true}
-                        style={{
-                            grid: { stroke: "grey" },
-                        }}
-                    />
-                    <VictoryAxis
-                        style={{
-                            grid: { stroke: "grey" },
-                        }}
-                        tickCount={4}
-                    />
-                    <VictoryLine
-                                x="timestamp"
-                                y={() => 255}
-                                style={{ data: { stroke: "#df4c1f" } }}
-                            /> */}
                 </VictoryChart>
                 <View></View>
                 <DataTable>

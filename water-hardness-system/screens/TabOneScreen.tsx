@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, TextInput, Button, Alert } from 'react-native';
+import { StyleSheet, Alert } from 'react-native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 import SensorListScrollContainer from './SensorListScrollContainer';
 import SensorListCard from './SensorListCard';
-import { Modal, Pressable } from "react-native"
+import { Modal } from "react-native"
 import { useState, useEffect, useContext } from 'react';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
@@ -19,63 +18,38 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
   const { user } = useContext(AuthContext)
-  var sensorData;
-  const [sensorDat, setSensorData] = useState({});
-  const [alert, setAlert] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const [listOfSensors, setListOfSensors] = useState([
-    {
-      name: 'Master Bedroom',
-      img_url: '',
-    },
-    {
-      name: 'Bathroom #1',
-      img_url: '',
-    },
-    {
-      name: 'Bathroom #2',
-      img_url: '',
-    },
-    {
-      name: 'Kitchen',
-      img_url: '',
-    },
-    {
-      name: 'Toilet',
-      img_url: '',
-    },
-    {
-      name: 'Random Sink',
-      img_url: '',
-    },
+
   ]);
   var socket = io('http://localhost:3000');
-  socket.emit("newUser", {userEmail: user});
+  socket.emit("newUser", { userEmail: user });
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    setListOfSensors([]);
     getAllSensors(user)
-    .then(resp => resp.json())
-    .then(data => {
-      console.log("DEBUGDEBUGDEBUG", data);
-      setListOfSensors(data.message.sensorList);
-      setRefreshing(false);
-    }).catch(err => {
-      console.log(err);
-      setRefreshing(false);
-    });
-    
+      .then(resp => resp.json())
+      .then(data => {
+        console.log(data);
+        setListOfSensors(data.message.sensorList);
+        setRefreshing(false);
+      }).catch(err => {
+        console.log(err);
+        setRefreshing(false);
+      });
+
   }, []);
 
   useEffect(() => {
     getAllSensors(user)
-    .then(resp => resp.json())
-    .then(data => {
-      console.log("DEBUGDEBUGDEBUG", data);
-      setListOfSensors(data.message.sensorList);
-    }).catch(err => {
-      console.log(err);
-    });
+      .then(resp => resp.json())
+      .then(data => {
+        console.log(data);
+        setListOfSensors(data.message.sensorList);
+      }).catch(err => {
+        console.log(err);
+      });
 
     socket.on("sendNotification", (data) => {
       console.log("DEBUG plz work");
@@ -96,11 +70,11 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
     addNewSensor(parseInt(sensorID), user, location)
       .then((resp) => resp.json())
       .then((data) => {
-          console.log("SUCCESS", data);
+        console.log("SUCCESS", data);
       })
       .catch((err) => {
-          console.log("ERROR", err);
-    });
+        console.log("ERROR", err);
+      });
     setLocation("")
     setsensorID("")
     setListOfSensors(oldList => [...oldList, { name, img_url }])
@@ -157,18 +131,16 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
                 backgroundColor="purple"
               />
             </TouchableOpacity>
-            {/* <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable> */}
-            {/* </View> */}
           </View>
         </View>
       </Modal>
       {/* *************************************************** */}
-      <SensorListScrollContainer title={'Sensors'} setModalVisible={setModalVisible} modalVisible={modalVisible} refreshing={refreshing} onRefresh={onRefresh}>
+      <SensorListScrollContainer
+        title={'Sensors'}
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+        refreshing={refreshing}
+        onRefresh={onRefresh}>
         {listOfSensors.map((obj) => {
           return (<SensorListCard key={obj.name} navigation={navigation} payload={obj} />);
         })}

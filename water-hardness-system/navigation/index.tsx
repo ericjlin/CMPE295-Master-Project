@@ -30,9 +30,9 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       {user ?
-       <RootNavigator />
-       :
-       <AuthScreen />
+        <RootNavigator />
+        :
+        <AuthScreen />
       }
     </NavigationContainer>
   );
@@ -95,36 +95,12 @@ function BottomTabNavigator() {
               }} source={require("../assets/images/water-logo.png")} />
             </Pressable>
           ),
-          // headerRight: () => (
-          //   <Pressable
-          //     onPress={() => navigation.navigate('Modal')}
-          //     style={({ pressed }) => ({
-          //       opacity: pressed ? 0.5 : 1,
-          //     })}>
-          //     {/* <FontAwesome
-          //       name="info-circle"
-          //       size={25}
-          //       color={Colors[colorScheme].text}
-          //       style={{ marginRight: 15 }}
-          //     /> */}
-          //     <Text
-          //     style={{
-          //       right: 15
-          //     }}>Profile</Text>
-          //   </Pressable>
-          // ),
           headerRight: () => (
             <Pressable
               onPress={() => logout()}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
-              {/* <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              /> */}
               <Text
                 style={{
                   right: 15
@@ -161,12 +137,6 @@ function BottomTabNavigator() {
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
-              {/* <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              /> */}
               <Text
                 style={{
                   right: 15
